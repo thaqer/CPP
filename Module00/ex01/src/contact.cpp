@@ -12,19 +12,42 @@
 
 #include "contact.hpp"
 
-void Contact::setContact() {
+void Contact::setContact()
+{
     std::string input;
 
-    std::cout << "First name: ";
-    std::getline(std::cin, firstname);
-    std::cout << "Last name: ";
-    std::getline(std::cin, lastname);
-    std::cout << "Nickname: ";
-    std::getline(std::cin, nickname);
-    std::cout << "Phone number: ";
-    std::getline(std::cin, phoneNumber);
-    std::cout << "Darkest secret: ";
-    std::getline(std::cin, darkestSecret);
+	while (firstname.empty())
+	{
+    	std::cout << "First name: ";
+		std::getline(std::cin, firstname);
+	}
+    while (lastname.empty())
+	{
+    	std::cout << "Last name: ";
+        std::getline(std::cin, lastname);
+	}
+    while (nickname.empty())
+	{
+    	std::cout << "Nickname: ";
+        std::getline(std::cin, nickname);
+	}
+    while (phoneNumber.empty())
+	{
+		// here I can use isdigit to check each character something like this :
+		//if (std::any_of(phoneNumber.begin(), phoneNumber.end(), [](char c){ return !std::isdigit(c); }))
+    	std::cout << "Phone number: ";
+        std::getline(std::cin, phoneNumber);
+		if (phoneNumber.find_first_not_of("0123456789") != std::string::npos)
+		{
+			std::cout << "Invalid phone number. Please enter digits only." << std::endl;
+			phoneNumber.clear();
+		}
+	}
+    while (darkestSecret.empty())
+	{
+    	std::cout << "Darkest secret: ";
+        std::getline(std::cin, darkestSecret);
+	}
 }
 
 void Contact::displayContact(int index) const
