@@ -9,7 +9,7 @@ RED    		= \033[0;31m
 RESET   	= \033[0m
 ARROW   	= ✔
 
-SRCS		= src/PhoneBook.cpp
+SRCS		= src/PhoneBook.cpp src/contact.cpp src/main.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
