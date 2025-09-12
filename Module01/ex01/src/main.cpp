@@ -14,10 +14,15 @@
 
 int main()
 {
-	Zombie* z1 = newZombie("Zombie1");
-	z1->announce();
-	delete z1;
+	int N = 5;
+	Zombie* horde = zombieHorde(N, "Zombie");
 
-	randomChump("Zombie2");
+	int i = 0;
+	while (i < N)
+	{
+		horde[i].announce();
+		++i;
+	}
+	delete[] horde;
 	return 0;
 }
