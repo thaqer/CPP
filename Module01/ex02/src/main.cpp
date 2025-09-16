@@ -10,19 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Zombie.hpp"
+#include <iostream>
+#include <string>
 
 int main()
 {
-	int N = 5;
-	Zombie* horde = zombieHorde(N, "Zombie");
+	std::string name = "HI THIS IS BRAIN";
+	std::string &nameRef = name;
+	std::string *namePtr = &name;
 
-	int i = 0;
-	while (i < N)
-	{
-		horde[i].announce();
-		++i;
-	}
-	delete[] horde;
+	std::cout << &name << std::endl;
+	std::cout << namePtr << std::endl;
+	std::cout << &nameRef << std::endl;
+
+	std::cout << name << std::endl;
+	std::cout << *namePtr << std::endl;
+	std::cout << nameRef << std::endl;
+
 	return 0;
 }
