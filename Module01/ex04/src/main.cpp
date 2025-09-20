@@ -10,26 +10,41 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HumanA.hpp"
-#include "HumanB.hpp"
-#include "Weapon.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
 
 int main()
 {
+    std::string filename;
+    std::string s1;
+    std::string s2;
+
+    std::cout << "Enter the filename: ";
+    std::getline(std::cin, filename);
+    std::cout << "Enter the string to be replaced (s1): ";
+    std::getline(std::cin, s1);
+    std::cout << "Enter the replacement string (s2): ";
+    std::getline(std::cin, s2);
+
+    if (s1.empty())
     {
-    Weapon club = Weapon("crude spiked club");
-    HumanA bob("Bob", club);
-    bob.attack();
-    club.setType("some other type of club");
-    bob.attack();
+        std::cerr << "Error: (s1) cannot be empty." << std::endl;
+        return 1;
     }
+
+    std::ifstream inputFile(filename);
+    if (!inputFile)
     {
-    Weapon club = Weapon("crude spiked club");
-    HumanB jim("Jim");
-    jim.setWeapon(club);
-    jim.attack();
-    club.setType("some other type of club");
-    jim.attack();
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return 1;
     }
-    return 0;
+
+    std::ofstream outputFile(filename + ".replace");
+    if (!outputFile)
+    {
+        std::cerr << "Error: Could not create output file." << std::endl;
+        return 1;
+    }
+
 }
