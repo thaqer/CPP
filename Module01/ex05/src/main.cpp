@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Account.hpp                                        :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tbaniatt <tbaniatt@student.42.fr>          #+#  +:+       +#+        */
+/*   By: tbaniatt <tbaniatt@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-09-07 18:15:40 by tbaniatt          #+#    #+#             */
-/*   Updated: 2025-09-07 18:15:40 by tbaniatt         ###   ########.fr       */
+/*   Created: 2025/09/11 18:27:38 by tbaniatt          #+#    #+#             */
+/*   Updated: 2025/09/18 19:10:52 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ACCOUNT_HPP
-#define ACCOUNT_HPP
-
 #include <iostream>
-#include <string.h>
+#include <fstream>
+#include <string>
 
-class Account
+int main(int argc, char **argv)
 {
-private:
-
-public:
-
-};
-
-
-
-#endif
+	
+}

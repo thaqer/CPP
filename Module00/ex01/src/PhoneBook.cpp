@@ -20,7 +20,7 @@ PhoneBook::PhoneBook()
 
 void PhoneBook::addContact()
 {
-    if (Count < 8)
+    if (Count <= 8)
     {
         contact[Count].setContact();
         Count++;

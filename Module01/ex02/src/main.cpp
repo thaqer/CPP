@@ -16,16 +16,16 @@
 int main()
 {
 	std::string name = "HI THIS IS BRAIN";
-	std::string &nameRef = name;
-	std::string *namePtr = &name;
+	std::string &nameREF = name;
+	std::string *namePTR = &name;
 
 	std::cout << &name << std::endl;
-	std::cout << namePtr << std::endl;
-	std::cout << &nameRef << std::endl;
+	std::cout << namePTR << std::endl;
+	std::cout << &nameREF << std::endl;
 
 	std::cout << name << std::endl;
-	std::cout << *namePtr << std::endl;
-	std::cout << nameRef << std::endl;
+	std::cout << *namePTR << std::endl;
+	std::cout << nameREF << std::endl;
 
 	return 0;
 }

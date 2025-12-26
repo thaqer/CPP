@@ -2,7 +2,6 @@ NAME 	= megaphone
 CC   	= c++
 CFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
-incDir 		= includes
 objDir 		= obj
 GREEN   	= \033[0;32m
 RED    		= \033[0;31m
@@ -21,7 +20,7 @@ $(NAME): $(OBJS)
 	
 $(objDir)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -I$(incDir) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	@echo "$(RED)Deleting $(objDir)...$(RESET)"
