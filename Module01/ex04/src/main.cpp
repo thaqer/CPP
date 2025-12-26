@@ -14,18 +14,17 @@
 #include <fstream>
 #include <string>
 
-int main()
+int main(int argc, char **argv)
 {
-    std::string filename;
-    std::string s1;
-    std::string s2;
+    if (argc != 4)
+    {
+        std::cerr << "Usage: " << argv[0] << " <filename> <s1> <s2>" << std::endl;
+        return 1;
+    }
 
-    std::cout << "Enter the filename: ";
-    std::getline(std::cin, filename);
-    std::cout << "Enter the string to be replaced (s1): ";
-    std::getline(std::cin, s1);
-    std::cout << "Enter the replacement string (s2): ";
-    std::getline(std::cin, s2);
+    std::string filename = argv[1];
+    std::string s1 = argv[2];
+    std::string s2 = argv[3];
 
     if (s1.empty())
     {
@@ -36,7 +35,7 @@ int main()
     std::ifstream inputFile(filename.c_str());
     if (!inputFile)
     {
-        std::cerr << "Error: Could not open file " << filename << std::endl;
+        std::cerr << "Error: Could not open file" << filename << std::endl;
         return 1;
     }
 
