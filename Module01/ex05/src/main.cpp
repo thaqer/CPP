@@ -10,11 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "harl.hpp"
 
-int main(int argc, char **argv)
+int main()
 {
-	
+	Harl harl;
+	harl.complain("DEBUG");
+
+	return 0;
+
 }
