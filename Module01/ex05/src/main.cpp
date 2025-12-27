@@ -14,9 +14,14 @@
 
 int main()
 {
-	Harl harl;
-	harl.complain("DEBUG");
+	Harl *harl = new Harl();
+	
+	harl->complain("DEBUG");
+	harl->complain("INFO");
+	harl->complain("WARNING");
+	harl->complain("ERROR");
 
+	delete harl;
 	return 0;
 
 }
