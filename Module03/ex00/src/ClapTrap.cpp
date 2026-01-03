@@ -12,9 +12,9 @@
 
 #include "ClapTrap.hpp"
 
-ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackDamage(0)
+ClapTrap::ClapTrap() : hitPoints(10), energyPoints(10), attackDamage(0)
 {
-	std::cout << "ClapTrap " << name << " constructed with default values." << std::endl;
+	std::cout << "ClapTrap constructed with default values." << std::endl;
 }
 
 ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(10), attackDamage(0)
@@ -22,9 +22,8 @@ ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(1
 	std::cout << "ClapTrap " << name << " constructed." << std::endl;
 }
 
-ClapTrap::ClapTrap(const ClapTrap &other)
+ClapTrap::ClapTrap(const ClapTrap &other) : name(other.name), hitPoints(other.hitPoints), energyPoints(other.energyPoints), attackDamage(other.attackDamage)
 {
-	*this = other;
 	std::cout << "ClapTrap " << name << " copy constructed." << std::endl;
 }
 ClapTrap &ClapTrap::operator=(const ClapTrap &other)
@@ -51,13 +50,10 @@ void ClapTrap::attack(const std::string& target)
 	{
 		energyPoints--;
 		std::cout << "ClapTrap " << name << " attacks " << target
-		          << ", causing " << attackDamage << " points of damage!"
-		          << " (Energy left: " << energyPoints << ")" << std::endl;
+		          << ", causing " << attackDamage << " points of damage!" << std::endl;
 	}
 	else
-	{
 		std::cout << "ClapTrap " << name << " has insufficient energy or hit points to attack." << std::endl;
-	}
 }
 
 void ClapTrap::takeDamage(unsigned int amount)
@@ -80,7 +76,5 @@ void ClapTrap::beRepaired(unsigned int amount)
 		          << ", Energy left: " << energyPoints << ")" << std::endl;
 	}
 	else
-	{
 		std::cout << "ClapTrap " << name << " has insufficient energy or hit points to repair." << std::endl;
-	}
 }

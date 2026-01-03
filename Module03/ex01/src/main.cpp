@@ -11,18 +11,19 @@
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
+#include "ScavTrap.hpp"
 
 int main()
 {
-	ClapTrap clap1("Clappy");
-	ClapTrap clap2("Trapster");
+	ClapTrap clap("Clappy");
+	ScavTrap scav("Scavvy");
 
-	clap1.attack("Trapster");
-	clap2.takeDamage(5);
-	clap2.beRepaired(3);
-	clap2.attack("Clappy");
-	clap1.takeDamage(7);
-	clap1.beRepaired(4);
+	clap.attack("Scavvy");
+	scav.takeDamage(5);
+	scav.beRepaired(3);
+	scav.attack("Clappy");
+	clap.takeDamage(7);
+	clap.beRepaired(4);
 
 	return 0;
 }

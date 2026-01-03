@@ -10,7 +10,8 @@ RESET		= \033[0m
 ARROW		= ✔
 
 SRCS		= src/main.cpp \
-			src/ClapTrap.cpp
+			src/ClapTrap.cpp \
+			src/ScavTrap.cpp
 
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
