@@ -12,8 +12,7 @@
 
 #include "Fixed.hpp"
 
-int
-main( void ) 
+int main( void ) 
 {
 	Fixed a;
 
