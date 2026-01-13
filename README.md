@@ -11,14 +11,12 @@ This repository contains C++ programming exercises organized by modules. Each mo
 | Module 02 | [module02](../../tree/module02) | Ad-hoc polymorphism, operator overloading, Orthodox Canonical class form |
 | Module 03 | [module03](../../tree/module03) | Inheritance - base classes, derived classes, access specifiers |
 | Module 04 | [module04](../../tree/module04) | Subtype polymorphism, abstract classes, interfaces |
+| Module 05 | [module05](../../tree/module05) | Exception handling, custom exceptions |
 
 ## Navigation
 
 To work on a specific module, checkout its branch:  
 
 ```bash
-git checkout module00  # For Module 00
-git checkout module01  # For Module 01
-git checkout module02  # For Module 02
-git checkout module03  # For Module 03
-git checkout module04  # For Module 04
+git checkout moduleXX
+```
