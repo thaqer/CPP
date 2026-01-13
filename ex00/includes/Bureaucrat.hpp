@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bureaucrat.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tbaniatt <tbaniatt@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: thaer <thaer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 19:45:27 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/11 23:31:50 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/13 23:11:05 by thaer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ public:
 
 	void incrementGrade();
 	void decrementGrade();
-	
+
+	//internal Exception Classes to print error messages
+	//it just a error message class
 	class GradeTooHighException : public std::exception
 	{
 	public:
