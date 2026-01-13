@@ -1,22 +1,16 @@
-NAME	= Animals
-CC	= c++
-CFLAGS	= -Wall -Werror -Wextra -std=c++98
+NAME 	= bureaucrat
+CC   	= c++
+CFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
-incDir		= includes
-objDir		= obj
-GREEN		= \033[0;32m
-RED			= \033[0;31m
-RESET		= \033[0m
-ARROW		= ✔
+incDir 		= includes
+objDir 		= obj
+GREEN   	= \033[0;32m
+RED    		= \033[0;31m
+RESET   	= \033[0m
+ARROW   	= ✔
 
-SRCS		= src/main.cpp \
-			src/Animal.cpp \
-			src/Brain.cpp \
-			src/Dog.cpp \
-			src/Cat.cpp \
-			src/WrongAnimal.cpp \
-			src/WrongCat.cpp
-
+SRCS		= src/Bureaucrat.cpp \
+			  src/main.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
@@ -25,7 +19,7 @@ $(NAME): $(OBJS)
 	@echo "$(GREEN)Making $(NAME)...$(RESET)"
 	@$(CC) -o $(NAME) $(OBJS)
 	@echo "$(GREEN)Done $(ARROW)$(RESET)"
-
+	
 $(objDir)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -I$(incDir) -c $< -o $@
