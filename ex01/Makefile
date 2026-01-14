@@ -9,8 +9,9 @@ RED    		= \033[0;31m
 RESET   	= \033[0m
 ARROW   	= ✔
 
-SRCS		= src/Bureaucrat.cpp \
-			  src/main.cpp
+SRCS		= src/main.cpp \
+			  src/Bureaucrat.cpp \
+			  src/Form.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
