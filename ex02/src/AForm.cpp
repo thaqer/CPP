@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 20:26:18 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/27 20:27:36 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/28 19:22:57 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,47 @@ AForm::~AForm()
 	std::cout << "AForm Destructor called" << std::endl;
 }
 
-const
+const std::string& AForm::getName() const
+{
+	return name;
+}
+
+bool AForm::getIsSigned() const
+{
+	return isSigned;
+}
+
+int AForm::getSignGrade() const
+{
+	return signGrade;
+}
+
+int AForm::getExecuteGrade() const
+{
+	return executeGrade;
+}
+
+void AForm::beSigned(const Bureaucrat& bureaucrat)
+{
+	if (bureaucrat.getGrade() > signGrade)
+		throw GradeTooLowException();
+	isSigned = true;
+}
+
+void AForm::execute(const Bureaucrat& executor) const
+{
+	if (!isSigned)
+		throw NotSignedException();
+	if (executor.getGrade() > executeGrade)
+		throw GradeTooLowException();
+	action();
+}
+
+std::ostream& operator<<(std::ostream& os, const AForm& form)
+{
+	os << "Form: " << form.getName()
+	   << ", Signed: " << (form.getIsSigned() ? "Yes" : "No")
+	   << ", Sign Grade: " << form.getSignGrade()
+	   << ", Execute Grade: " << form.getExecuteGrade();
+	return os;
+}

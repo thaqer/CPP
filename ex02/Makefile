@@ -36,6 +36,7 @@ clean:
 fclean: clean
 	@echo "$(RED)Deleting $(NAME)...$(RESET)"
 	@rm -f $(NAME)
+	@rm -f *_shrubbery
 	@echo "$(RED)Done $(ARROW)$(RESET)"
 
 re: fclean all

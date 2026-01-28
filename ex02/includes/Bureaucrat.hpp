@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 20:08:33 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/19 20:15:42 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/28 19:50:44 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ public:
 	void decrementGrade();
 	
 	void signForm(AForm& form);
+	void executeForm(const AForm& form) const;
 
 	//internal Exception Classes to print error messages
 	//it just a error message class

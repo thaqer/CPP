@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 20:08:03 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/27 19:32:12 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/28 19:22:28 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include "Bureaucrat.hpp"
 
 class AForm
 {
@@ -65,9 +66,8 @@ public:
 	void beSigned(const Bureaucrat& bureaucrat);
 	void execute(const Bureaucrat& executor) const;
 	virtual void action() const = 0;
-
-	
-	
 };
+
+std::ostream& operator<<(std::ostream& os, const AForm& form);
 
 #endif
