@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 23:36:18 by thaer             #+#    #+#             */
-/*   Updated: 2026/01/28 19:58:10 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/30 18:05:11 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,122 +15,122 @@
 #include "ShrubberyCreationForm.hpp"
 #include "RobotomyRequestForm.hpp"
 #include "PresidentialPardonForm.hpp"
+#include "Intern.hpp"
 
 int main() 
 {
-	std::cout << "=== Test 1: ShrubberyCreationForm ===" << std::endl;
+	std::cout << "=== Test 1: Intern creates valid forms ===" << std::endl;
 	try {
-		Bureaucrat bob("Bob", 130);
-		ShrubberyCreationForm shrubbery("home");
+		Intern someRandomIntern;
+		AForm* form1;
+		AForm* form2;
+		AForm* form3;
 		
-		std::cout << bob << std::endl;
-		std::cout << shrubbery << std::endl;
+		form1 = someRandomIntern.makeForm("shrubbery creation", "home");
+		form2 = someRandomIntern.makeForm("robotomy request", "Bender");
+		form3 = someRandomIntern.makeForm("presidential pardon", "Arthur");
 		
-		bob.signForm(shrubbery);
-		bob.executeForm(shrubbery);
+		if (form1)
+		{
+			std::cout << *form1 << std::endl;
+			delete form1;
+		}
+		if (form2)
+		{
+			std::cout << *form2 << std::endl;
+			delete form2;
+		}
+		if (form3)
+		{
+			std::cout << *form3 << std::endl;
+			delete form3;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 
-	std::cout << "\n=== Test 2: RobotomyRequestForm Success ===" << std::endl;
+	std::cout << "\n=== Test 2: Intern with unknown form ===" << std::endl;
 	try {
-		Bureaucrat alice("Alice", 40);
-		RobotomyRequestForm robotomy("Bender");
+		Intern someRandomIntern;
+		AForm* form;
 		
-		std::cout << alice << std::endl;
-		std::cout << robotomy << std::endl;
-		
-		alice.signForm(robotomy);
-		alice.executeForm(robotomy);
+		form = someRandomIntern.makeForm("unknown form", "target");
+		if (form)
+		{
+			std::cout << *form << std::endl;
+			delete form;
+		}
+		else
+		{
+			std::cout << "Form creation failed (returned NULL)" << std::endl;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 
-	std::cout << "\n=== Test 3: PresidentialPardonForm Success ===" << std::endl;
+	std::cout << "\n=== Test 3: Using Intern-created form with Bureaucrat ===" << std::endl;
 	try {
-		Bureaucrat president("President", 1);
-		PresidentialPardonForm pardon("Arthur Dent");
+		Intern intern;
+		Bureaucrat boss("Boss", 1);
+		AForm* form = intern.makeForm("presidential pardon", "Criminal");
 		
-		std::cout << president << std::endl;
-		std::cout << pardon << std::endl;
-		
-		president.signForm(pardon);
-		president.executeForm(pardon);
+		if (form)
+		{
+			std::cout << boss << std::endl;
+			std::cout << *form << std::endl;
+			
+			boss.signForm(*form);
+			boss.executeForm(*form);
+			
+			delete form;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 
-	std::cout << "\n=== Test 4: Grade Too Low to Sign ===" << std::endl;
+	std::cout << "\n=== Test 4: Multiple forms by same Intern ===" << std::endl;
 	try {
-		Bureaucrat lowly("Lowly", 150);
-		PresidentialPardonForm pardon("Criminal");
+		Intern intern;
+		Bureaucrat highRank("HighRank", 1);
 		
-		std::cout << lowly << std::endl;
-		std::cout << pardon << std::endl;
+		AForm* shrub = intern.makeForm("shrubbery creation", "garden");
+		AForm* robot = intern.makeForm("robotomy request", "Target");
 		
-		lowly.signForm(pardon);
-		lowly.executeForm(pardon);
+		if (shrub)
+		{
+			highRank.signForm(*shrub);
+			highRank.executeForm(*shrub);
+			delete shrub;
+		}
+		
+		if (robot)
+		{
+			highRank.signForm(*robot);
+			highRank.executeForm(*robot);
+			delete robot;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 
-	std::cout << "\n=== Test 5: Grade Too Low to Execute ===" << std::endl;
+	std::cout << "\n=== Test 5: Intern copy constructor ===" << std::endl;
 	try {
-		Bureaucrat signer("Signer", 20);
-		Bureaucrat executor("Executor", 50);
-		PresidentialPardonForm pardon("Zaphod");
+		Intern intern1;
+		Intern intern2(intern1);
 		
-		std::cout << signer << std::endl;
-		std::cout << executor << std::endl;
-		std::cout << pardon << std::endl;
+		AForm* form1 = intern1.makeForm("robotomy request", "R2D2");
+		AForm* form2 = intern2.makeForm("shrubbery creation", "park");
 		
-		signer.signForm(pardon);
-		executor.executeForm(pardon);
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
-
-	std::cout << "\n=== Test 6: Execute Unsigned Form ===" << std::endl;
-	try {
-		Bureaucrat chief("Chief", 1);
-		ShrubberyCreationForm shrubbery("garden");
-		
-		std::cout << chief << std::endl;
-		std::cout << shrubbery << std::endl;
-		
-		chief.executeForm(shrubbery);
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
-
-	std::cout << "\n=== Test 7: Multiple Robotomy Attempts ===" << std::endl;
-	try {
-		Bureaucrat engineer("Engineer", 1);
-		RobotomyRequestForm robot1("Target1");
-		RobotomyRequestForm robot2("Target2");
-		RobotomyRequestForm robot3("Target3");
-		
-		std::cout << engineer << std::endl;
-		
-		engineer.signForm(robot1);
-		engineer.executeForm(robot1);
-		
-		engineer.signForm(robot2);
-		engineer.executeForm(robot2);
-		
-		engineer.signForm(robot3);
-		engineer.executeForm(robot3);
-	} catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
-
-	std::cout << "\n=== Test 8: Copy Constructor Test ===" << std::endl;
-	try {
-		ShrubberyCreationForm original("original");
-		ShrubberyCreationForm copy(original);
-		
-		std::cout << original << std::endl;
-		std::cout << copy << std::endl;
+		if (form1)
+		{
+			std::cout << *form1 << std::endl;
+			delete form1;
+		}
+		if (form2)
+		{
+			std::cout << *form2 << std::endl;
+			delete form2;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}

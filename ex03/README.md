@@ -1,4 +1,4 @@
-# Exercise 02: No, you need form 28B, not 28C...
+# Exercise 03: At least this beats coffee-making
 
 ## Table of Contents
 - [Project Overview](#project-overview)
@@ -6,7 +6,7 @@
 - [Key Concepts](#key-concepts)
 - [Class Hierarchy](#class-hierarchy)
 - [Implementation Details](#implementation-details)
-- [Grade System](#grade-system)
+- [Design Pattern Analysis](#design-pattern-analysis)
 - [Execution Flow](#execution-flow)
 - [Testing Strategy](#testing-strategy)
 - [Compilation and Usage](#compilation-and-usage)
@@ -15,19 +15,21 @@
 
 ## Project Overview
 
-This exercise extends Exercise 01 by transforming the concrete `Form` class into an **abstract base class** called `AForm`. You must implement three concrete form types, each with unique behavior when executed:
-
-1. **ShrubberyCreationForm** - Creates ASCII tree files
-2. **RobotomyRequestForm** - Attempts robotomy with random success
-3. **PresidentialPardonForm** - Announces presidential pardon
+This exercise builds upon Exercise 02 by introducing the **Intern** class - a factory pattern implementation that creates forms dynamically based on string input. The Intern doesn't need to know or understand what forms do; it just knows how to create them on demand.
 
 ### Requirements
-- Make `Form` abstract by renaming it to `AForm` and adding a pure virtual function
-- Implement three concrete form classes that inherit from `AForm`
-- Add an `executeForm()` method to the `Bureaucrat` class
-- Each form must have specific sign/execute grade requirements
-- Each form performs a unique action when executed
-- Proper exception handling for all operations
+- Create an `Intern` class that can instantiate forms by name
+- Implement a `makeForm()` method that takes form name and target
+- Use function pointers (C++98) to map form names to creation functions
+- Handle unknown form types gracefully (no exceptions)
+- Return NULL when form type is unknown
+- Properly manage memory for dynamically created forms
+
+### Key Quote from Subject
+> "Announce form creation with messages like:
+> 'Intern creates <form>'
+> If form doesn't exist:
+> 'Intern cannot create <form> because it doesn't exist.'"
 
 ---
 
@@ -35,82 +37,102 @@ This exercise extends Exercise 01 by transforming the concrete `Form` class into
 
 ### C++98 Concepts Covered:
 
-1. **Abstract Classes**
-   - Pure virtual functions (`virtual void action() const = 0;`)
-   - Cannot instantiate abstract classes directly
-   - Forces derived classes to implement specific methods
+1. **Factory Pattern**
+   - Encapsulates object creation logic
+   - Creates objects without specifying exact class
+   - Returns base class pointers to derived objects
 
-2. **Inheritance & Polymorphism**
-   - Base class pointers to derived objects
-   - Virtual function overriding
-   - Runtime polymorphism
+2. **Function Pointers**
+   - Pointers to functions (C-style function pointers)
+   - Array of function pointers for dispatch tables
+   - Static member functions as targets
 
-3. **Template Method Pattern**
-   - Base class defines algorithm structure
-   - Derived classes fill in specific steps
-   - `AForm::execute()` defines the template, `action()` is the hook
+3. **Static Member Functions**
+   - No `this` pointer (class-level, not instance-level)
+   - Can be called without object instance
+   - Perfect for factory methods
 
-4. **Exception Safety**
-   - Exception handling in constructors
-   - Exception propagation through call stack
-   - Custom exception classes
+4. **String Comparison & Lookup**
+   - Parallel arrays for name-to-function mapping
+   - Linear search through form names
+   - Case-sensitive string matching
 
-5. **File I/O Operations**
-   - Output file streams (`std::ofstream`)
-   - File creation and writing
-   - Error handling for file operations
+5. **Memory Management**
+   - Dynamic allocation with `new`
+   - Caller responsibility to `delete`
+   - NULL return for error handling (C++98 style)
 
-6. **Random Number Generation**
-   - C-style random with `std::rand()` and `std::srand()`
-   - Seeding with `std::time()`
+6. **Loose Coupling**
+   - Intern doesn't know about form implementations
+   - Client code doesn't know which concrete class is created
+   - Reduces dependencies between components
 
 ---
 
 ## Key Concepts
 
-### Abstract Base Class (AForm)
+### Factory Pattern
+
+The Factory Pattern is a creational design pattern that provides an interface for creating objects without specifying their exact class.
 
 ```cpp
-class AForm {
-    virtual void action() const = 0;  // Pure virtual = abstract
-    void execute(const Bureaucrat& executor) const;  // Template method
+// Without Factory (tight coupling)
+ShrubberyCreationForm* form = new ShrubberyCreationForm("target");
+
+// With Factory (loose coupling)
+Intern intern;
+AForm* form = intern.makeForm("shrubbery creation", "target");
+```
+
+**Benefits**:
+- **Decoupling**: Client doesn't need to know concrete class names
+- **Flexibility**: Easy to add new form types
+- **Single Responsibility**: Creation logic centralized in one place
+- **User-Friendly**: Uses human-readable strings instead of class names
+
+### Function Pointers in C++98
+
+```cpp
+// Function pointer type
+AForm* (*functionPtr)(const std::string&);
+
+// Array of function pointers
+AForm* (*formCreators[3])(const std::string&) = {
+    &Intern::createShrubbery,
+    &Intern::createRobotomy,
+    &Intern::createPresidential
 };
+
+// Calling through pointer
+AForm* form = formCreators[0]("target");  // Creates ShrubberyCreationForm
 ```
 
-**Why Abstract?**
-- **Code Reuse**: Common validation logic (`execute()`) lives in base class
-- **Polymorphism**: Handle different form types uniformly
-- **Extensibility**: Easy to add new form types
-- **Enforcement**: Guarantees all forms implement required behavior
+**Why Static Members?**
+- Function pointers need consistent signature
+- Static functions don't have implicit `this` parameter
+- Can be addressed like regular functions
 
-### Pure Virtual Functions
-
-```cpp
-virtual void action() const = 0;
-```
-
-- The `= 0` makes it pure virtual
-- Class becomes abstract (cannot instantiate)
-- Derived classes **must** implement this function
-- Provides interface contract
-
-### Template Method Pattern
+### Parallel Array Dispatch Table
 
 ```cpp
-void AForm::execute(const Bureaucrat& executor) const {
-    if (!isSigned)
-        throw NotSignedException();
-    if (executor.getGrade() > executeGrade)
-        throw GradeTooLowException();
-    action();  // Polymorphic call to derived class
+std::string formNames[3] = {
+    "shrubbery creation",
+    "robotomy request",
+    "presidential pardon"
+};
+
+AForm* (*formCreators[3])(const std::string&) = {
+    &Intern::createShrubbery,
+    &Intern::createRobotomy,
+    &Intern::createPresidential
+};
+
+// Lookup: find index in names, call corresponding creator
+for (int i = 0; i < 3; i++) {
+    if (formNames[i] == name)
+        return formCreators[i](target);
 }
 ```
-
-**Pattern Structure**:
-1. Base class defines the algorithm skeleton
-2. Derived classes fill in specific steps
-3. Ensures consistent validation across all forms
-4. Allows unique behavior per form type
 
 ---
 
@@ -132,196 +154,267 @@ void AForm::execute(const Bureaucrat& executor) const {
               │  RobotomyRequest   │
               │       Form         │
               └────────────────────┘
+                        ▲
+                        │
+                  ┌─────┴─────┐
+                  │  Intern   │ (Factory)
+                  └───────────┘
 ```
 
 ### Class Relationships
 
-**AForm (Abstract Base Class)**
-- Common attributes: `name`, `isSigned`, `signGrade`, `executeGrade`
-- Common methods: `beSigned()`, `execute()`, getters
-- Pure virtual: `action()`
-- Exception classes: `GradeTooHighException`, `GradeTooLowException`, `NotSignedException`
+**Intern (Factory)**
+- Creates forms dynamically
+- Returns `AForm*` (base class pointer)
+- Uses function pointers for dispatch
+- No knowledge of form implementations
+
+**AForm & Derived Classes**
+- Same as Exercise 02
+- Intern creates them but doesn't manipulate them
 
 **Bureaucrat**
-- Has methods: `signForm(AForm&)`, `executeForm(const AForm&)`
-- Uses polymorphism to work with any form type
+- Uses forms created by Intern
+- Signs and executes them
 
 ---
 
 ## Implementation Details
 
-### 1. ShrubberyCreationForm
+### Intern Class Structure
 
-**Purpose**: Creates a file with ASCII trees
-
-**Specifications**:
-- Sign grade: 145
-- Execute grade: 137
-- Creates file: `<target>_shrubbery`
-
-**Implementation**:
 ```cpp
-void ShrubberyCreationForm::action() const {
-    std::ofstream file((target + "_shrubbery").c_str());
-    if (!file.is_open())
-        throw std::runtime_error("Failed to create file");
-    
-    file << "ASCII tree art here" << std::endl;
-    file.close();
+class Intern {
+private:
+    // Static factory methods (no 'this' pointer)
+    static AForm* createShrubbery(const std::string& target);
+    static AForm* createRobotomy(const std::string& target);
+    static AForm* createPresidential(const std::string& target);
+
+public:
+    Intern();
+    Intern(const Intern& other);
+    Intern& operator=(const Intern& other);
+    ~Intern();
+
+    // The factory method
+    AForm* makeForm(const std::string& name, const std::string& target);
+};
+```
+
+### Static Factory Methods
+
+```cpp
+AForm* Intern::createShrubbery(const std::string& target) {
+    return new ShrubberyCreationForm(target);
+}
+
+AForm* Intern::createRobotomy(const std::string& target) {
+    return new RobotomyRequestForm(target);
+}
+
+AForm* Intern::createPresidential(const std::string& target) {
+    return new PresidentialPardonForm(target);
 }
 ```
 
 **Key Points**:
-- Uses C++98 `std::ofstream` for file operations
-- `.c_str()` needed for C++98 string concatenation
-- File created in current directory
-- Must handle file creation failures
+- `static` = no access to instance members
+- Simple: just instantiate and return
+- Each function has same signature
+- Compatible with function pointer array
 
----
+### makeForm() Implementation
 
-### 2. RobotomyRequestForm
-
-**Purpose**: Robotomizes target with 50% success rate
-
-**Specifications**:
-- Sign grade: 72
-- Execute grade: 45
-- Random success/failure
-
-**Implementation**:
 ```cpp
-void RobotomyRequestForm::action() const {
-    std::cout << "* Drilling noises *" << std::endl;
+AForm* Intern::makeForm(const std::string& name, const std::string& target) {
+    // Dispatch table: names
+    std::string formNames[3] = {
+        "shrubbery creation",
+        "robotomy request",
+        "presidential pardon"
+    };
     
-    std::srand(std::time(0));  // Seed RNG with current time
-    if (std::rand() % 2)       // 0 or 1 (50/50)
-        std::cout << target << " has been robotomized successfully!";
-    else
-        std::cout << "Robotomy failed on " << target << "!";
+    // Dispatch table: function pointers
+    AForm* (*formCreators[3])(const std::string&) = {
+        &Intern::createShrubbery,
+        &Intern::createRobotomy,
+        &Intern::createPresidential
+    };
+    
+    // Linear search through names
+    for (int i = 0; i < 3; i++) {
+        if (formNames[i] == name) {
+            std::cout << "Intern creates " << name << std::endl;
+            return formCreators[i](target);  // Call through pointer
+        }
+    }
+    
+    // Not found
+    std::cout << "Intern cannot create form: " << name 
+              << " (unknown form type)" << std::endl;
+    return NULL;
 }
 ```
 
-**Random Number Generation**:
-- `std::srand(time(0))` - Seeds random generator (call once)
-- `std::rand()` - Returns pseudo-random integer
-- `% 2` - Modulo operation gives 0 or 1 (even/odd)
-- Results in 50% success rate
+**Algorithm**:
+1. Define parallel arrays (names and creators)
+2. Iterate through form names
+3. On match: announce creation and call creator
+4. On no match: announce failure and return NULL
 
-**Note**: Seeding in `action()` means each call gets different time, potentially same seed if called quickly. Better to seed once in `main()`.
+### Memory Management
 
----
-
-### 3. PresidentialPardonForm
-
-**Purpose**: Announces presidential pardon (hardest form)
-
-**Specifications**:
-- Sign grade: 25
-- Execute grade: 5 (most restrictive)
-- Simple message output
-
-**Implementation**:
 ```cpp
-void PresidentialPardonForm::action() const {
-    std::cout << target << " has been pardoned by Zaphod Beeblebrox."
-              << std::endl;
+// Intern creates form
+Intern intern;
+AForm* form = intern.makeForm("shrubbery creation", "home");
+
+// Check if creation succeeded
+if (form) {
+    // Use the form
+    bureaucrat.signForm(*form);
+    bureaucrat.executeForm(*form);
+    
+    // Caller is responsible for deletion!
+    delete form;
 }
 ```
 
-**Cultural Reference**:
-- Zaphod Beeblebrox from "The Hitchhiker's Guide to the Galaxy"
-- President of the Galaxy (humorous reference)
+**Important**: 
+- Intern creates with `new`
+- Caller must `delete`
+- Always check for NULL before use
 
 ---
 
-## Grade System
+## Design Pattern Analysis
 
-### Grade Scale
-- **Range**: 1 (highest) to 150 (lowest)
-- **Lower number = Higher authority**
-- Grade 1 can sign/execute anything
-- Grade 150 has minimal authority
+### Factory Method Pattern
 
-### Form Requirements
+**Intent**: Define an interface for creating objects, but let subclasses/factory decide which class to instantiate.
 
-| Form Type                | Sign Grade | Execute Grade | Difficulty |
-|--------------------------|------------|---------------|------------|
-| ShrubberyCreationForm    | 145        | 137          | Easy       |
-| RobotomyRequestForm      | 72         | 45           | Medium     |
-| PresidentialPardonForm   | 25         | 5            | Hard       |
+**Participants**:
+- **Product** (AForm): Abstract interface
+- **Concrete Products** (ShrubberyCreationForm, etc.): Implementations
+- **Creator** (Intern): Factory class with creation method
+- **Client** (main): Uses factory to get products
 
-### Grade Logic
-
-```cpp
-// To sign/execute, bureaucrat's grade must be EQUAL or LOWER
-if (bureaucrat.getGrade() > form.getSignGrade())
-    throw GradeTooLowException();
-
-// Example:
-// Form requires grade 50
-// Bureaucrat with grade 30 ✓ (can do it - higher authority)
-// Bureaucrat with grade 70 ✗ (cannot - lower authority)
+**Sequence Diagram**:
+```
+Client          Intern              AForm
+  |               |                   |
+  |--makeForm()-->|                   |
+  |               |--new Concrete---->|
+  |               |                   |
+  |<--AForm*------|                   |
+  |               |                   |
+  |----------use form--------------->|
+  |               |                   |
+  |----------delete form------------>|
 ```
 
-**Remember**: Lower grade number = Higher authority = Can do more
+### Alternatives & Trade-offs
+
+#### 1. Function Pointers (Our Implementation)
+```cpp
+AForm* (*creators[3])(const std::string&) = {...};
+```
+**Pros**: Fast, low overhead, C++98 compatible
+**Cons**: Fixed size, must know all types at compile time
+
+#### 2. Map with Strings (C++11+)
+```cpp
+std::map<std::string, std::function<AForm*(const std::string&)>> creators;
+```
+**Pros**: Dynamic, easy to extend
+**Cons**: Not C++98, slower lookup
+
+#### 3. Switch Statement
+```cpp
+switch (formType) {
+    case SHRUBBERY: return new ShrubberyCreationForm(target);
+    ...
+}
+```
+**Pros**: Simple, readable
+**Cons**: Doesn't work with strings, needs enum
+
+#### 4. If-Else Chain
+```cpp
+if (name == "shrubbery creation")
+    return new ShrubberyCreationForm(target);
+else if (name == "robotomy request")
+    return new RobotomyRequestForm(target);
+...
+```
+**Pros**: Simple, no arrays needed
+**Cons**: Verbose, repetitive
+
+**Our choice (function pointers) is optimal for C++98**.
 
 ---
 
 ## Execution Flow
 
-### Complete Form Lifecycle
+### Complete Factory Creation Flow
 
 ```
-1. CREATION
-   ┌─────────────────────────────────┐
-   │ Form form("target")             │
-   │ - Name set (const)              │
-   │ - Grades set (const)            │
-   │ - isSigned = false              │
-   └─────────────────────────────────┘
-                  ↓
-2. SIGNING
-   ┌─────────────────────────────────┐
-   │ bureaucrat.signForm(form)       │
-   │   → form.beSigned(bureaucrat)   │
-   │   → Check grade requirements    │
-   │   → Set isSigned = true         │
-   └─────────────────────────────────┘
-                  ↓
-3. EXECUTION
-   ┌─────────────────────────────────┐
-   │ bureaucrat.executeForm(form)    │
-   │   → form.execute(bureaucrat)    │
-   │   → Check if signed             │
-   │   → Check execute grade         │
-   │   → Call action()               │
-   └─────────────────────────────────┘
-                  ↓
-4. ACTION (Polymorphic)
-   ┌─────────────────────────────────┐
-   │ Virtual function dispatch       │
-   │ - Shrubbery → Create file       │
-   │ - Robotomy  → Random result     │
-   │ - Pardon    → Print message     │
-   └─────────────────────────────────┘
+1. CLIENT REQUEST
+   ┌─────────────────────────────────────────┐
+   │ Intern intern;                          │
+   │ AForm* form = intern.makeForm(          │
+   │     "robotomy request", "Bender"        │
+   │ );                                      │
+   └─────────────────────────────────────────┘
+                      ↓
+2. DISPATCH TABLE LOOKUP
+   ┌─────────────────────────────────────────┐
+   │ Search formNames[] for match            │
+   │ - "shrubbery creation" ❌               │
+   │ - "robotomy request"   ✓ (index 1)      │
+   │ Found at index 1                        │
+   └─────────────────────────────────────────┘
+                      ↓
+3. CREATOR FUNCTION CALL
+   ┌─────────────────────────────────────────┐
+   │ formCreators[1]("Bender")               │
+   │   → Intern::createRobotomy("Bender")    │
+   │   → new RobotomyRequestForm("Bender")   │
+   └─────────────────────────────────────────┘
+                      ↓
+4. RETURN PRODUCT
+   ┌─────────────────────────────────────────┐
+   │ AForm* form = <address>                 │
+   │ Type: RobotomyRequestForm               │
+   │ Target: "Bender"                        │
+   └─────────────────────────────────────────┘
+                      ↓
+5. USE & CLEANUP
+   ┌─────────────────────────────────────────┐
+   │ if (form) {                             │
+   │     bureaucrat.signForm(*form);         │
+   │     bureaucrat.executeForm(*form);      │
+   │     delete form;  // Caller's duty!     │
+   │ }                                       │
+   └─────────────────────────────────────────┘
 ```
 
-### Exception Handling
+### Error Handling Flow
 
-```cpp
-try {
-    form.execute(bureaucrat);
-}
-catch (const AForm::NotSignedException& e) {
-    // Form wasn't signed first
-}
-catch (const AForm::GradeTooLowException& e) {
-    // Bureaucrat doesn't have authority
-}
-catch (const std::exception& e) {
-    // Catch-all for other errors (e.g., file I/O)
-}
 ```
+Client: makeForm("invalid form", "target")
+                      ↓
+        Search formNames[] (no match)
+                      ↓
+        Print error message
+                      ↓
+        return NULL
+                      ↓
+Client: Check if (form) → false → handle gracefully
+```
+
+**No Exceptions**: Subject explicitly says to avoid exceptions for unknown forms. Use NULL instead.
 
 ---
 
@@ -329,59 +422,112 @@ catch (const std::exception& e) {
 
 ### Test Categories
 
-#### 1. **Basic Functionality Tests**
+#### 1. **Basic Factory Tests**
 ```cpp
-// Each form type can be created
-// Each form can be signed by appropriate grade
-// Each form can be executed after signing
+// Create each form type
+form = intern.makeForm("shrubbery creation", "home");
+form = intern.makeForm("robotomy request", "target");
+form = intern.makeForm("presidential pardon", "criminal");
+
+// Verify non-NULL returns
+// Verify correct form type created
 ```
 
-#### 2. **Grade Validation Tests**
+#### 2. **Unknown Form Tests**
 ```cpp
-// Sign with insufficient grade → Exception
-// Execute with insufficient grade → Exception
-// Execute unsigned form → Exception
+// Invalid form name
+form = intern.makeForm("unknown form", "target");
+// Should return NULL
+// Should print error message
+
+// Case sensitivity
+form = intern.makeForm("Shrubbery Creation", "target");  // NULL
+form = intern.makeForm("ROBOTOMY REQUEST", "target");     // NULL
 ```
 
-#### 3. **Polymorphism Tests**
+#### 3. **Integration Tests**
 ```cpp
-// Treat different forms through AForm pointer
-// Virtual function dispatch works correctly
-AForm* form = new RobotomyRequestForm("target");
-form->execute(bureaucrat);  // Calls correct action()
+// Create form via Intern
+Intern intern;
+AForm* form = intern.makeForm("presidential pardon", "Arthur");
+
+// Use with Bureaucrat
+Bureaucrat boss("Boss", 1);
+boss.signForm(*form);
+boss.executeForm(*form);
+
+// Cleanup
+delete form;
 ```
 
-#### 4. **Edge Cases**
+#### 4. **Memory Management Tests**
 ```cpp
-// Boundary grades (exactly at threshold)
-// Grade 1 bureaucrat (can do everything)
-// Grade 150 bureaucrat (can do almost nothing)
+// Multiple forms from same intern
+Intern intern;
+AForm* form1 = intern.makeForm("shrubbery creation", "home");
+AForm* form2 = intern.makeForm("robotomy request", "target");
+
+// Both valid, independent forms
+delete form1;
+delete form2;
+
+// Multiple interns
+Intern intern1, intern2;
+AForm* f1 = intern1.makeForm("shrubbery creation", "garden");
+AForm* f2 = intern2.makeForm("shrubbery creation", "park");
+// Different forms, same type
 ```
 
-#### 5. **Memory Management**
+#### 5. **Orthodox Canonical Form Tests**
 ```cpp
-// Copy constructors work
-// Assignment operators work
-// No memory leaks (destructor chain)
+// Copy constructor
+Intern intern1;
+Intern intern2(intern1);  // Should work (no state to copy)
+
+// Assignment operator
+Intern intern3;
+intern3 = intern1;  // Should work
+
+// Forms still created correctly
 ```
 
-#### 6. **Specific Behavior Tests**
+#### 6. **String Matching Tests**
 ```cpp
-// Shrubbery: File is created with correct name
-// Robotomy: Different results on multiple runs
-// Pardon: Correct message output
+// Exact matches (should work)
+"shrubbery creation"
+"robotomy request"
+"presidential pardon"
+
+// Near misses (should fail)
+"shrubbery"           // Incomplete
+"shrubberycreation"   // No space
+"robotomy"            // Incomplete
+"presidential"        // Incomplete
 ```
 
-### Sample Test Output
+### Expected Output Patterns
 
 ```
-=== Test: RobotomyRequestForm ===
-Alice, bureaucrat grade 40
+=== Test 1: Valid Forms ===
+Intern default constructor called
+Intern creates shrubbery creation
+Form: ShrubberyCreationForm, Signed: No, Sign Grade: 145, Execute Grade: 137
+Intern creates robotomy request
 Form: RobotomyRequestForm, Signed: No, Sign Grade: 72, Execute Grade: 45
-Alice signed RobotomyRequestForm
-* Drilling noises *
-Robotomy failed on Bender!
-Alice executed RobotomyRequestForm
+Intern creates presidential pardon
+Form: PresidentialPardonForm, Signed: No, Sign Grade: 25, Execute Grade: 5
+
+=== Test 2: Invalid Form ===
+Intern creates
+Intern cannot create form: unknown form (unknown form type)
+Form creation failed (returned NULL)
+
+=== Test 3: Integration ===
+Boss, bureaucrat grade 1
+Form: PresidentialPardonForm, Signed: No, Sign Grade: 25, Execute Grade: 5
+Boss signed PresidentialPardonForm
+Criminal has been pardoned by Zaphod Beeblebrox.
+Boss executed PresidentialPardonForm
 ```
 
 ---
@@ -401,160 +547,251 @@ make
 make fclean
 ```
 
-### Makefile Targets
+### Makefile Considerations
 
-- `make` / `make all` - Compile the project
-- `make clean` - Remove object files
-- `make fclean` - Remove objects, executable, and shrubbery files
-- `make re` - Rebuild everything
+Same as Exercise 02, but now includes:
+- `src/Intern.cpp`
+- `includes/Intern.hpp`
 
-### Expected Files After Execution
-
-```
-bureaucrat          # Executable
-home_shrubbery      # Created by ShrubberyCreationForm("home")
-garden_shrubbery    # Created by ShrubberyCreationForm("garden")
-```
-
-### View Created Trees
+### Running the Program
 
 ```bash
-cat home_shrubbery
-cat garden_shrubbery
+$ make
+$ ./bureaucrat
+
+# Creates:
+# - Executable: bureaucrat
+# - Potential shrubbery files if created forms are executed
 ```
 
----
+### Memory Leak Checking
 
-## Design Patterns Used
+```bash
+# Compile with sanitizers
+make CXXFLAGS="-fsanitize=address -g"
+./bureaucrat
 
-### 1. Template Method Pattern
-- **Where**: `AForm::execute()` + derived `action()`
-- **Why**: Ensures consistent validation while allowing varied behavior
-- **Benefit**: Changes to validation logic only need one update
+# Or use valgrind
+valgrind --leak-check=full ./bureaucrat
+```
 
-### 2. Exception as Control Flow
-- **Where**: Grade validation, signature checking
-- **Why**: Clear error handling, impossible to ignore failures
-- **Benefit**: Type-safe error propagation
-
-### 3. Inheritance Hierarchy
-- **Where**: AForm base, three concrete forms
-- **Why**: Code reuse, polymorphism
-- **Benefit**: Extensible design (easy to add Form types)
+**Important**: All dynamically created forms must be deleted!
 
 ---
 
 ## Common Pitfalls & Solutions
 
-### ❌ Pitfall 1: Forgetting to Make AForm Abstract
+### ❌ Pitfall 1: Non-Static Factory Methods
 ```cpp
-// Wrong - concrete Form class
-class Form { };
+// Wrong - can't take address of non-static member function
+class Intern {
+    AForm* createShrubbery(const std::string& target);  // Non-static
+};
 
-// Correct - abstract AForm
-class AForm {
-    virtual void action() const = 0;  // Pure virtual
+// Function pointer won't compile
+AForm* (*ptr)(const std::string&) = &Intern::createShrubbery;  // ❌
+```
+
+**Solution**: Make factory methods `static`
+```cpp
+static AForm* createShrubbery(const std::string& target);  // ✓
+```
+
+### ❌ Pitfall 2: Forgetting to Delete Forms
+```cpp
+// Memory leak!
+Intern intern;
+AForm* form = intern.makeForm("shrubbery creation", "home");
+// ... use form ...
+// Missing: delete form;  ❌
+```
+
+**Solution**: Always delete dynamically allocated forms
+```cpp
+if (form) {
+    // ... use form ...
+    delete form;  // ✓
+}
+```
+
+### ❌ Pitfall 3: Not Checking for NULL
+```cpp
+// Dangerous - accessing NULL pointer!
+AForm* form = intern.makeForm("invalid", "target");
+std::cout << *form << std::endl;  // ❌ Segfault if NULL
+```
+
+**Solution**: Always check before dereferencing
+```cpp
+AForm* form = intern.makeForm("invalid", "target");
+if (form) {  // ✓
+    std::cout << *form << std::endl;
+    delete form;
+}
+```
+
+### ❌ Pitfall 4: Case-Sensitive Mismatches
+```cpp
+// Won't match - case sensitive!
+form = intern.makeForm("Shrubbery Creation", "home");  // ❌ NULL
+form = intern.makeForm("ROBOTOMY REQUEST", "target");  // ❌ NULL
+```
+
+**Solution**: Use exact lowercase names as defined
+```cpp
+form = intern.makeForm("shrubbery creation", "home");  // ✓
+```
+
+### ❌ Pitfall 5: Wrong Function Pointer Syntax
+```cpp
+// Wrong - missing address-of operator
+AForm* (*creators[3])(const std::string&) = {
+    Intern::createShrubbery,  // ❌ (might work, but implicit)
+};
+
+// Correct - explicit address
+AForm* (*creators[3])(const std::string&) = {
+    &Intern::createShrubbery,  // ✓ Clear intent
 };
 ```
 
-### ❌ Pitfall 2: Wrong Grade Comparison
+### ❌ Pitfall 6: Throwing Exceptions for Unknown Forms
 ```cpp
-// Wrong
-if (bureaucrat.getGrade() < signGrade)  // ❌
-
-// Correct (lower number = higher authority)
-if (bureaucrat.getGrade() > signGrade)  // ✓
+// Wrong - subject says no exceptions for unknown forms
+if (not found)
+    throw UnknownFormException();  // ❌
 ```
 
-### ❌ Pitfall 3: Executing Before Signing
+**Solution**: Return NULL and print message
 ```cpp
-// Wrong
-form.execute(bureaucrat);  // NotSignedException!
-
-// Correct
-form.beSigned(bureaucrat);
-form.execute(bureaucrat);
-```
-
-### ❌ Pitfall 4: Forgetting to Override action()
-```cpp
-// Compiler error - abstract class can't be instantiated
-class MyForm : public AForm {
-    // Missing: void action() const override
-};
-```
-
-### ❌ Pitfall 5: File Not Created (Too Low Grade)
-```cpp
-// Bob grade 140 cannot execute (needs 137)
-Bureaucrat bob("Bob", 140);
-ShrubberyCreationForm form("home");
-bob.signForm(form);
-bob.executeForm(form);  // GradeTooLowException!
+if (not found) {
+    std::cout << "Intern cannot create form..." << std::endl;
+    return NULL;  // ✓
+}
 ```
 
 ---
 
-## Extension Ideas
+## Advanced Concepts
 
-### 1. Form Factory
+### Extensibility
+
+**Adding a New Form Type**:
+
+1. Create the new form class
+2. Add static factory method in Intern
+3. Add to dispatch tables in `makeForm()`
+
 ```cpp
-class FormFactory {
-public:
-    static AForm* createForm(std::string type, std::string target);
+// Step 1: New form class
+class TaxForm : public AForm { ... };
+
+// Step 2: Factory method
+static AForm* Intern::createTax(const std::string& target) {
+    return new TaxForm(target);
+}
+
+// Step 3: Update dispatch tables
+std::string formNames[4] = {
+    "shrubbery creation",
+    "robotomy request",
+    "presidential pardon",
+    "tax form"  // New!
+};
+
+AForm* (*formCreators[4])(const std::string&) = {
+    &Intern::createShrubbery,
+    &Intern::createRobotomy,
+    &Intern::createPresidential,
+    &Intern::createTax  // New!
 };
 ```
 
-### 2. Form Collections
-```cpp
-std::vector<AForm*> forms;
-forms.push_back(new ShrubberyCreationForm("garden"));
-forms.push_back(new RobotomyRequestForm("Bender"));
-```
+**Limitation**: Must recompile to add forms. True plugin architecture requires dynamic loading.
 
-### 3. Chain of Responsibility
+### Function Pointer Deep Dive
+
 ```cpp
-// Multiple bureaucrats try to sign until one succeeds
+// Declaration: pointer to function taking string, returning AForm*
+AForm* (*functionPtr)(const std::string&);
+
+// Assignment: address of static member function
+functionPtr = &Intern::createShrubbery;
+
+// Call: parenthesize pointer, then call
+AForm* result = (*functionPtr)("target");
+
+// Shorthand call (works in C++)
+AForm* result = functionPtr("target");  // () has higher precedence
+
+// Array: 3 such function pointers
+AForm* (*array[3])(const std::string&);
 ```
 
 ---
 
 ## Key Takeaways
 
-1. **Abstract classes** enforce contracts and enable polymorphism
-2. **Pure virtual functions** make classes abstract
-3. **Template Method Pattern** separates algorithm from implementation
-4. **Inheritance** enables code reuse and extensibility
-5. **Virtual functions** enable runtime polymorphism
-6. **Exception handling** provides type-safe error management
-7. **Grade system** models real-world permission hierarchies
+1. **Factory Pattern** encapsulates object creation and decouples client from concrete classes
+2. **Function Pointers** enable dispatch tables and callbacks in C++98
+3. **Static Member Functions** have no `this` pointer and can be used as function pointers
+4. **Parallel Arrays** provide simple name-to-function mapping
+5. **NULL Returns** are C++98 way to indicate failure (vs. exceptions in C++11+)
+6. **Caller Responsibility** for memory management when factory returns raw pointers
+7. **Loose Coupling** allows adding new products without changing client code
 
 ---
 
 ## Resources
 
-- **C++ Concepts**: Abstract classes, pure virtual functions, polymorphism
-- **Design Patterns**: Template Method Pattern
-- **File I/O**: std::ofstream, file handling
-- **Random Generation**: std::rand(), std::srand(), std::time()
-- **Exception Handling**: try-catch blocks, exception propagation
+### C++ Concepts
+- Factory Method Pattern
+- Function pointers
+- Static member functions
+- Dynamic memory allocation
+- NULL pointer handling
+
+### Design Patterns
+- Factory Method
+- Dispatch tables
+- Parallel arrays for lookup
+
+### Best Practices
+- Always check pointers before dereferencing
+- Delete what you new
+- Use static for stateless factory methods
+- Clear error messages for failures
+
+---
+
+## Comparison: Ex02 vs Ex03
+
+| Aspect                | Ex02                     | Ex03                          |
+|-----------------------|--------------------------|-------------------------------|
+| **Focus**             | Polymorphism             | Factory Pattern               |
+| **New Class**         | AForm + 3 Concrete Forms | Intern                        |
+| **Creation Method**   | Direct instantiation     | Factory method                |
+| **Coupling**          | Client knows all classes | Client uses string names      |
+| **Extensibility**     | Must update client code  | Only update factory           |
+| **Error Handling**    | Exceptions               | NULL return                   |
+| **Key Technique**     | Virtual functions        | Function pointers             |
 
 ---
 
 **Project Completion Checklist:**
-- [ ] AForm is abstract with pure virtual `action()`
-- [ ] All three form types implemented
-- [ ] Correct grade requirements for each form
-- [ ] ShrubberyCreationForm creates files
-- [ ] RobotomyRequestForm has random success
-- [ ] PresidentialPardonForm prints message
-- [ ] Bureaucrat has `executeForm()` method
-- [ ] All exceptions handled properly
-- [ ] Orthodox Canonical Form for all classes
-- [ ] Comprehensive test suite in main()
-- [ ] No memory leaks
-- [ ] Makefile with fclean removes shrubbery files
+- [ ] Intern class with Orthodox Canonical Form
+- [ ] Static factory methods for each form type
+- [ ] makeForm() with function pointer dispatch
+- [ ] Parallel arrays for name-to-creator mapping
+- [ ] Correct form names (lowercase, with spaces)
+- [ ] NULL return for unknown forms (no exceptions)
+- [ ] Success/failure messages printed
+- [ ] Memory management: delete all created forms
+- [ ] No memory leaks (valgrind clean)
+- [ ] Integration tests with Bureaucrat
+- [ ] Makefile includes Intern.cpp
 - [ ] Code compiles with -Wall -Wextra -Werror -std=c++98
+- [ ] All previous exercise functionality still works
 
 ---
 
