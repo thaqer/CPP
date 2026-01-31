@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 20:35:03 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/28 19:50:44 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/31 18:25:26 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ RobotomyRequestForm::~RobotomyRequestForm()
 
 void RobotomyRequestForm::action() const
 {
-	std::cout << "* Drilling noises *" << std::endl;
+	std::cout << "          Drilling noises" << std::endl;
 	
 	std::srand(std::time(0));
 	if (std::rand() % 2)

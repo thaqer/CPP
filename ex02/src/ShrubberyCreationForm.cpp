@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 20:35:03 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/01/28 19:50:44 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/01/31 17:40:16 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,16 @@ void ShrubberyCreationForm::action() const
 	if (!file.is_open())
 		throw std::runtime_error("Failed to create file");
 	
-	file << "       ###" << std::endl;
-	file << "      #o###" << std::endl;
-	file << "    #####o###" << std::endl;
-	file << "   #o#\\#|#/###" << std::endl;
-	file << "    ###\\|/#o#" << std::endl;
-	file << "     # }|{  #" << std::endl;
-	file << "       }|{" << std::endl;
+	file << "        *        " << std::endl;
+	file << "       ***       " << std::endl;
+	file << "      *****      " << std::endl;
+	file << "     *******     " << std::endl;
+	file << "    *********    " << std::endl;
+	file << "   ***********   " << std::endl;
+	file << "  *************  " << std::endl;
+	file << "       |||       " << std::endl;
+	file << "       |||       " << std::endl;
 	file << std::endl;
-	file << "       ###" << std::endl;
-	file << "      #o###" << std::endl;
-	file << "    #####o###" << std::endl;
-	file << "   #o#\\#|#/###" << std::endl;
-	file << "    ###\\|/#o#" << std::endl;
-	file << "     # }|{  #" << std::endl;
-	file << "       }|{" << std::endl;
-	
 	file.close();
 	std::cout << "Shrubbery has been created at " << target << "_shrubbery" << std::endl;
 }
