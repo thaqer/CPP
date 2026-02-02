@@ -1,4 +1,4 @@
-NAME 	= bureaucrat
+NAME 	= convert
 CC   	= c++
 CFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
@@ -10,7 +10,7 @@ RESET   	= \033[0m
 ARROW   	= ✔
 
 SRCS		= src/main.cpp \
-			  src/Bureaucrat.cpp
+			  src/ScalarConverter.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
