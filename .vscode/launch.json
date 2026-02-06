@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/tbaniatt/CPP",
-      "program": "/home/tbaniatt/CPP/build/Debug/outDebug",
+      "cwd": "/home/tbaniatt/CPP/ex00/src",
+      "program": "/home/tbaniatt/CPP/ex00/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
