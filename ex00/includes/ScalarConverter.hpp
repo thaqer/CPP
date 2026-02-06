@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ScalarConverter.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
+/*   By: thaer <thaer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 19:46:06 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/02/02 20:07:12 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/02/06 00:25:15 by thaer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@
 #include <cerrno>
 #include <cmath>
 
+
+typedef enum e_type
+{
+	CHAR,
+	INT,
+	FLOAT,
+	DOUBLE
+}	t_type;
 
 class ScalarConverter
 {
