@@ -1,4 +1,4 @@
-NAME 	= convert
+NAME 	= whatever
 CC   	= c++
 CFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
@@ -9,8 +9,7 @@ RED    		= \033[0;31m
 RESET   	= \033[0m
 ARROW   	= ✔
 
-SRCS		= src/main.cpp \
-			  src/ScalarConverter.cpp
+SRCS		= src/main.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
