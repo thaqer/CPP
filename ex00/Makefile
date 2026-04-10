@@ -1,6 +1,6 @@
 NAME 	= whatever
-CC   	= c++
-CFLAGS 	= -Wall -Werror -Wextra -std=c++98
+CXX   	= c++
+CXXFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
 incDir 		= includes
 objDir 		= obj
@@ -16,12 +16,12 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@echo "$(GREEN)Making $(NAME)...$(RESET)"
-	@$(CC) -o $(NAME) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 	@echo "$(GREEN)Done $(ARROW)$(RESET)"
 	
 $(objDir)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -I$(incDir) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(incDir) -c $< -o $@
 
 clean:
 	@echo "$(RED)Deleting $(objDir)...$(RESET)"
