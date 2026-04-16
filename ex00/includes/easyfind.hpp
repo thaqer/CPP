@@ -1,35 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   whatever.hpp                                       :+:      :+:    :+:   */
+/*   easyfind.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/06 16:44:49 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/02/08 18:34:33 by tbaniatt         ###   ########.fr       */
+/*   Created: 2026/04/16 19:44:52 by tbaniatt          #+#    #+#             */
+/*   Updated: 2026/04/16 20:31:55 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WHATEVER_HPP
-#define WHATEVER_HPP
+#ifndef EASYFIND_HPP
+#define EASYFIND_HPP
 
+#include <algorithm>
+#include <stdexcept>
 #include <iostream>
+#include <vector>
 
-template <class T> void swap(T &a , T &b)
-{
-	T temp = a;
-	a = b;
-	b = temp;
-}
 
-template <class T> T &min(T &a , T &b)
+template <typename T> typename T::iterator easyfind(T &container, int value)
 {
-	return ((a < b ) ? a : b);
-}
-
-template <class T> T &max(T &a , T &b)
-{
-	return ((a > b ) ? a : b);
+    typename T::iterator it = std::find(container.begin(), container.end(), value);
+    if (it == container.end())
+        throw std::runtime_error("not found");
+    return (it);
 }
 
 #endif
