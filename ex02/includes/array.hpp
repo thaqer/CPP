@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 16:44:49 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/02/08 20:57:02 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/04/11 15:56:40 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,33 @@ template <class T> class Array
 		T *array;
 		unsigned int len;
 	public:
-		Array();
-		Array(unsigned int n);
-		Array(const Array &other);
-		Array &operator=(const Array &other);
-		~Array();
+		Array(): array(NULL), len(0) {}
+		Array(unsigned int n) 
+		{
+			len = n;
+			array = new T[n];
+		}
+		Array(const Array &other)
+		{
+			len = other.len;
+			array = new T[len];
+			for (size_t i = 0; i < len; i++)
+				array[i] = other.array[i];
+		}
+		T &operator[](unsigned int index)
+		{
+			if (index >= len)
+				throw std::out_of_range("Index out of range");
+			return array[index];
+		}
+		T &operator[](unsigned int index) const
+		{
+			if (index >= len)
+				throw std::out_of_range("Index out of range");
+			return array[index];
+		}
+		~Array() {delete[] array};
 
-		T &operator[](unsigned int index);
 		unsigned int size() const;
 };
 
