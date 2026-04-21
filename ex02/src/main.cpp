@@ -5,28 +5,39 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/11 23:36:18 by thaer             #+#    #+#             */
-/*   Updated: 2026/04/11 18:36:48 by tbaniatt         ###   ########.fr       */
+/*   Created: 2026/04/21 22:08:57 by tbaniatt          #+#    #+#             */
+/*   Updated: 2026/04/21 22:15:39 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "array.hpp"
+#include "MutantStack.hpp"
 
-int main(void) 
+int main()
 {
-	Array<int> ar1(5);
-	for(size_t i = 0; i < ar1.size(); i++)
-		ar1[i] = i;
-	for(size_t i = 0; i < ar1.size(); i++)
-		std::cout << ar1[i] << std::endl;
-	try
-	{
-		std::cout << ar1[5] << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+    MutantStack<int> mstack;
+    mstack.push(5);
+    mstack.push(17);
+
+    std::cout << mstack.top() << std::endl; // 17
+    mstack.pop(); // removes 17
+    std::cout << mstack.size() << std::endl; // 1 (only 5 is left)
 	
-	return 0;
+    mstack.push(3); // 5, 3
+    mstack.push(5); // 5, 3, 5
+    mstack.push(737); // 5, 3, 5, 737
+    mstack.push(0);  // 5, 3, 5, 737, 0
+	
+    MutantStack<int>::iterator it = mstack.begin(); // points to 5
+    MutantStack<int>::iterator ite = mstack.end();  // points past the last element (after 0)
+
+    ++it; // points to 3
+    --it;  // points back to 5
+	
+    while (it != ite) // iterates through the stack from bottom to top
+    {
+		std::cout << *it << std::endl;
+		++it;
+    }
+    std::stack<int> s(mstack); // creates a standard stack copy of mstack
+    return 0;
 }
