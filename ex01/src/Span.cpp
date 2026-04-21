@@ -12,7 +12,6 @@
 
 #include "Span.hpp"
 
-Span::Span() : max(0){}
 Span::Span(unsigned int n) : max(n){}
 Span::~Span(){}
 Span::Span(const Span &other) : max(other.max), num(other.num){}
@@ -35,7 +34,7 @@ void Span::addNumber(int number)
 	num.push_back(number);
 }
 
-unsigned int Span::shortestSpan()
+unsigned int Span::shortestSpan() const
 {
 	if (num.size() < 2)
 		throw std::runtime_error("Not enough numbers to compute span");
@@ -54,7 +53,7 @@ unsigned int Span::shortestSpan()
 	return (minSpan);
 }
 
-unsigned int Span::longestSpan()
+unsigned int Span::longestSpan() const
 {
 	if (num.size() < 2)
 		throw std::runtime_error("Not enough numbers to compute span");
