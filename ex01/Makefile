@@ -1,4 +1,4 @@
-NAME 	= ex01
+NAME 	= span
 CXX   	= c++
 CXXFLAGS 	= -Wall -Werror -Wextra -std=c++98
 

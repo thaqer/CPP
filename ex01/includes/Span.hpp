@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Span.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
+/*   By: theaer <theaer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 20:57:26 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/04/21 21:17:39 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/04/24 21:11:02 by theaer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iterator>
+#include <iostream>
 
 class Span
 {
