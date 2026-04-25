@@ -1,4 +1,4 @@
-NAME 	= easyfind
+NAME 	= btc
 CXX   	= c++
 CXXFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
@@ -9,7 +9,8 @@ RED    		= \033[0;31m
 RESET   	= \033[0m
 ARROW   	= ✔
 
-SRCS		= src/main.cpp
+SRCS		= src/main.cpp \
+				src/BitcoinExchange.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)

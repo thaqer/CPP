@@ -5,29 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/16 20:14:32 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/04/16 20:48:01 by tbaniatt         ###   ########.fr       */
+/*   Created: 2026/04/25 15:24:31 by tbaniatt          #+#    #+#             */
+/*   Updated: 2026/04/25 18:53:33 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "BitcoinExchange.hpp"
 
-#include "easyfind.hpp"
-
-int main(void) 
+int main(int argc, char **argv)
 {
-	std::vector<int> vec;
-	for (int i = 0; i < 10; i++)
-		vec.push_back(i);
-	try
+	if (argc != 2)
 	{
-		std::vector<int>::iterator it = easyfind(vec, 5);
-		std::cout << "Value: " << *it << std::endl;
-		it = easyfind(vec, 15);
-		std::cout << "Value: " << *it << std::endl;
+		std::cerr << "Error: Invalid number of arguments" << std::endl;
+		return 1;
 	}
-	catch (const std::exception &e)
+	
+	std::string FileName = "data.csv";
+	std::map<std::string, double> exchange_rate;
+	BitcoinExchange exchange;
+	
+	if (!exchange.save_data(FileName, exchange_rate))
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Error: Failed to save data" << std::endl;
+		return 1;
+	}
+	std::cout << "Data saved successfully\n" << std::endl;
+	
+	if (!exchange.get_data(argv[1], exchange_rate))
+	{
+		std::cerr << "Error: Failed to get data" << std::endl;
+		return 1;
 	}
 	return 0;
 }
