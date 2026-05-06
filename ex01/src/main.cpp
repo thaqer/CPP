@@ -3,24 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theaer <theaer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/24 21:09:42 by theaer            #+#    #+#             */
-/*   Updated: 2026/04/24 21:10:41 by theaer           ###   ########.fr       */
+/*   Created: 2026/04/25 19:25:19 by tbaniatt          #+#    #+#             */
+/*   Updated: 2026/04/25 19:39:24 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Span.hpp"
+#include "RPN.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
-	Span sp = Span(5);
-	sp.addNumber(6);
-	sp.addNumber(3);
-	sp.addNumber(17);
-	sp.addNumber(9);
-	sp.addNumber(11);
-	std::cout << sp.shortestSpan() << std::endl;
-	std::cout << sp.longestSpan() << std::endl;
-	return 0;
+	if (argc != 2)
+	{
+		std::cerr << "Error: Invalid number of arguments" << std::endl;
+		return (1);
+	}
+	RPN rpn;
+	
+	std::string exprtion = argv[1];
+	int result = rpn.evaluate(exprtion);
+	std::cout << result << std::endl;
+	return (0);
 }
