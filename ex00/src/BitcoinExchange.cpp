@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
+#include <cctype>
 #include <cstdlib>
 #include <fstream>
 
@@ -90,6 +91,11 @@ bool    validDate(const std::string &date)
         return false;
     if (date[4] != '-' || date[7] != '-')
         return false;
+    for (size_t i = 0; i < date.size(); ++i)
+    {
+        if (i != 4 && i != 7 && !std::isdigit(static_cast<unsigned char>(date[i])))
+            return false;
+    }
 
     std::string yearStr = date.substr(0, 4);
     std::string monthStr = date.substr(5, 2);
@@ -178,12 +184,12 @@ bool BitcoinExchange::get_data(const std::string &file, std::map<std::string, do
 
         if (valueD < 0)
         {
-            std::cerr << "Error: not a positive number => " << valueD << std::endl;
+            std::cerr << "Error: not a positive number." << std::endl;
             continue;
         }
         if (valueD > 1000)
         {
-            std::cerr << "Error: too large a number => " << valueD << std::endl;
+            std::cerr << "Error: too large a number." << std::endl;
             continue;
         }
 

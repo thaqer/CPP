@@ -6,14 +6,14 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 19:25:12 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/04/25 20:15:01 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/05/24 14:01:36 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
 
 RPN::RPN() {}
-RPN::RPN(const RPN &other) {(void)other}
+RPN::RPN(const RPN &other) {(void)other;}
 RPN& RPN::operator=(const RPN &other)
 {
 	(void)other;
@@ -54,22 +54,21 @@ int RPN::evaluate(const std::string &expression)
 		}
 		else
 		{
-			try
-			{
-				int num = std::stoi(token);
-				stack.push(num);
-			}
-			catch (const std::exception&)
+			std::istringstream tokenstream(token);
+			int num;
+			char extra;
+
+			if (!(tokenstream >> num) || (tokenstream >> extra))
 			{
 				valid = false;
 				break;
 			}
+			stack.push(num);
 		}
 	}
 
 	if (!valid || stack.size() != 1)
 		throw std::invalid_argument("Invalid expression");
 
-	return stack.top();}
-
+	return stack.top();
 }

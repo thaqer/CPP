@@ -29,7 +29,6 @@ int main(int argc, char **argv)
 		std::cerr << "Error: Failed to save data" << std::endl;
 		return 1;
 	}
-	std::cout << "Data saved successfully\n" << std::endl;
 	
 	if (!exchange.get_data(argv[1], exchange_rate))
 	{

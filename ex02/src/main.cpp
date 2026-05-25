@@ -3,49 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theaer <theaer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/21 22:08:57 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/04/24 21:21:36 by theaer           ###   ########.fr       */
+/*   Created: 2026/05/25 00:00:00 by tbaniatt          #+#    #+#             */
+/*   Updated: 2026/05/25 00:00:00 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "MutantStack.hpp"
+#include "PmergeMe.hpp"
 
-int main()
+int	main(int argc, char **argv)
 {
-	MutantStack<int> mstack;
-	mstack.push(5);
-	mstack.push(17);
-
-	std::cout << mstack.top() << std::endl; // 17
-	mstack.pop(); // removes 17
-	std::cout << mstack.size() << std::endl; // 1 (only 5 is left)
-
-	mstack.push(3); // 5, 3
-	mstack.push(5); // 5, 3, 5
-	mstack.push(737); // 5, 3, 5, 737
-	mstack.push(0);  // 5, 3, 5, 737, 0
-
-	MutantStack<int>::iterator it = mstack.begin(); // points to 5
-	MutantStack<int>::iterator ite = mstack.end();  // points past the last element (after 0)
-
-	++it; // points to 3
-	--it;  // points back to 5
-
-	while (it != ite) // iterates through the stack from bottom to top
+	try
 	{
-			std::cout << *it << std::endl;
-			++it;
-	}
-	std::stack<int> s(mstack); // creates a standard stack copy of mstack
+		PmergeMe sorter;
 
-	// printe the elements of the standard stack s from top to bottom
-	std::cout << "extra test" << std::endl;
-	while (!s.empty())
-	{
-		std::cout << s.top() << std::endl; // prints top element
-		s.pop(); // removes top element
+		sorter.run(argc, argv);
 	}
-	return 0;
+	catch (const std::exception &e)
+	{
+		(void)e;
+		std::cerr << "Error" << std::endl;
+		return (1);
+	}
+	return (0);
 }

@@ -1,4 +1,4 @@
-NAME 	= mutantstack
+NAME 	= PmergeMe
 CXX   	= c++
 CXXFLAGS 	= -Wall -Werror -Wextra -std=c++98
 
@@ -9,7 +9,8 @@ RED    		= \033[0;31m
 RESET   	= \033[0m
 ARROW   	= ✔
 
-SRCS		= src/main.cpp
+SRCS		= src/main.cpp \
+				src/PmergeMe.cpp
 OBJS		= $(SRCS:%.cpp=$(objDir)/%.o)
 
 all: $(NAME)
