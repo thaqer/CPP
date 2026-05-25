@@ -6,7 +6,7 @@
 /*   By: tbaniatt <tbaniatt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 19:25:12 by tbaniatt          #+#    #+#             */
-/*   Updated: 2026/05/24 14:01:36 by tbaniatt         ###   ########.fr       */
+/*   Updated: 2026/05/25 13:58:35 by tbaniatt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ int RPN::evaluate(const std::string &expression)
 			else if (token[0] == '*')
 				stack.push(a * b);
 			else if (token[0] == '/')
+				if (b == 0)
+				{
+					valid = false;
+					break;
+				}
 				stack.push(a / b);
 		}
 		else
