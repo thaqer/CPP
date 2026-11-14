@@ -84,6 +84,11 @@ Both the element type `A` and the function type `B` are templates, so it works w
 
 A **class template** `Array<T>`: a safe array that knows its own `size()` and checks the index in `operator[]`.
 
+- `new T[n]()` gives every element its **default value** (`0` for `int`, `""` for `std::string`)
+- Copy constructor and `operator=` make a **deep copy**: each array owns its own memory
+- `operator[]` **throws** `std::out_of_range` for a bad index
+- The template code is in `Array.tpp`, which `array.hpp` includes at the end
+
 ```mermaid
 classDiagram
     class Array~T~ {
@@ -98,6 +103,18 @@ classDiagram
     }
 ```
 
+```
+Empty array size: 0
+Array<int>(3): 0 0 0
+Array<std::string>: Hello 42
+original: 1 2 3
+copy:     100 2 3        ← changing the copy didn't touch the original
+assigned: 1 200 3
+original[3]: Array: index out of bounds
+original[-2]: Array: index out of bounds
+750 random values match: yes
+```
+
 ---
 
 ## ▶️ How to Run
@@ -106,6 +123,7 @@ classDiagram
 git checkout module07
 cd ex00 && make && ./whatever
 cd ../ex01 && make && ./iter
+cd ../ex02 && make && ./array
 ```
 
 Compiled with `c++ -Wall -Wextra -Werror -std=c++98`.
