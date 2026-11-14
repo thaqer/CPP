@@ -99,6 +99,15 @@ ScavTrap Scavvy attacks Clappy, causing 20 points of damage!
 
 Notice that `takeDamage` and `beRepaired` print **ClapTrap**: ScavTrap didn't rewrite them, it **inherited** them.
 
+### Output of ex02
+
+```
+ClapTrap Clappy attacks Scavvy, causing 0 points of damage!
+ScavTrap Scavvy attacks Clappy, causing 20 points of damage!   ← ScavTrap's own attack()
+ClapTrap Fraggy attacks Clappy, causing 30 points of damage!   ← FragTrap uses the inherited attack()
+FragTrap Fraggy is requesting a high five!
+```
+
 ---
 
 ## ▶️ How to Run
@@ -106,6 +115,7 @@ Notice that `takeDamage` and `beRepaired` print **ClapTrap**: ScavTrap didn't re
 ```bash
 git checkout module03
 cd ex01 && make && ./ClapTrap
+cd ../ex02 && make && ./ClapTrap
 ```
 
 Compiled with `c++ -Wall -Wextra -Werror -std=c++98`.
