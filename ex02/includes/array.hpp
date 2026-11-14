@@ -28,7 +28,10 @@ template <class T> class Array
 		~Array();
 
 		T &operator[](unsigned int index);
+		const T &operator[](unsigned int index) const;
 		unsigned int size() const;
 };
+
+#include "Array.tpp"
 
 #endif
