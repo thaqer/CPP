@@ -16,6 +16,7 @@
 #include <iostream>
 #include <stack>
 #include <sstream>
+#include <stdexcept>
 
 class RPN 
 {

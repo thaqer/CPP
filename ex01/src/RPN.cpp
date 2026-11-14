@@ -50,12 +50,14 @@ int RPN::evaluate(const std::string &expression)
 			else if (token[0] == '*')
 				stack.push(a * b);
 			else if (token[0] == '/')
+			{
 				if (b == 0)
 				{
 					valid = false;
 					break;
 				}
 				stack.push(a / b);
+			}
 		}
 		else
 		{

@@ -22,7 +22,15 @@ int main(int argc, char **argv)
 	RPN rpn;
 	
 	std::string exprtion = argv[1];
-	int result = rpn.evaluate(exprtion);
-	std::cout << result << std::endl;
+	try
+	{
+		int result = rpn.evaluate(exprtion);
+		std::cout << result << std::endl;
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "Error" << std::endl;
+		return (1);
+	}
 	return (0);
 }
