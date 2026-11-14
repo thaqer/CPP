@@ -113,6 +113,13 @@ classDiagram
 - **HumanB** may have no weapon at first, so it stores a **pointer** that starts as `NULL` and is set later with `setWeapon()`.
 - Both see the change when the weapon's type is changed, because neither one copied it.
 
+```
+Bob attacks with their crude spiked club
+Bob attacks with their some other type of club     ← same Weapon object, new type
+Jim attacks with their crude spiked club
+Jim attacks with their some other type of club
+```
+
 ### ex04: Sed is for losers 🔁
 
 `./replace <file> <s1> <s2>` copies `<file>` into `<file>.replace`, with every `s1` replaced by `s2`. It uses `std::ifstream` / `std::ofstream`. The subject forbids `std::string::replace`, so the search and replace is done by hand.
@@ -128,7 +135,7 @@ bye 42
 
 ### ex05: Harl 2.0 🗣️
 
-`Harl::complain("WARNING")` finds the matching level and calls the right private function through an **array of pointers to member functions**, without any `if/else` chain.
+`Harl::complain("WARNING")` finds the matching level and calls the right private function through an **array of pointers to member functions**, without any `if/else` chain. An unknown level is simply ignored.
 
 ```mermaid
 flowchart LR
@@ -145,6 +152,7 @@ git checkout module01
 cd ex00 && make && ./Zombie
 cd ../ex01 && make && ./horde
 cd ../ex02 && make && ./brain
+cd ../ex03 && make && ./attack
 cd ../ex04 && make && ./replace test hello bye
 cd ../ex05 && make && ./Harl
 ```
