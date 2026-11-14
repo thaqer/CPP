@@ -73,6 +73,15 @@ token   stack (top on the right)
                      result = 14
 ```
 
+```
+$ ./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
+42
+$ ./RPN "1 0 /"
+Error
+$ ./RPN "(1 + 1)"
+Error
+```
+
 Errors (not enough numbers, division by zero, leftover numbers, bad token) → `Error`.
 
 ---
