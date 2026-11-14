@@ -78,7 +78,9 @@ SUCCESS: Pointers match!
 
 ```mermaid
 classDiagram
-    class Base { +virtual ~Base() }
+    class Base {
+        +virtual destructor
+    }
     Base <|-- A
     Base <|-- B
     Base <|-- C
