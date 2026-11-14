@@ -18,18 +18,15 @@ PhoneBook::PhoneBook()
 	Count = 0;
 }
 
+// x is the next slot to write. After 8 contacts it wraps around to 0,
+// so the oldest contact is the one that gets replaced.
 void PhoneBook::addContact()
 {
-    if (Count <= 8)
-    {
-        contact[Count].setContact();
+    if (!contact[x].setContact())
+        return;
+    x = (x + 1) % 8;
+    if (Count < 8)
         Count++;
-    }
-    else
-    {
-        contact[x].setContact();
-        x = (x) % 8;
-    }
 }
 
 void PhoneBook::searchContact() const

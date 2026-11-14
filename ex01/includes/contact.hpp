@@ -32,7 +32,7 @@ private:
 
 public:
 
-	void setContact();
+	bool setContact();
 	void displayContact(int index) const;
 	void displayFullContact() const;
 

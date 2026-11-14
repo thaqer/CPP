@@ -12,42 +12,39 @@
 
 #include "contact.hpp"
 
-void Contact::setContact()
+// Reads one non-empty line into "field".
+// Returns false at end of input (Ctrl+D), so the program can't loop forever.
+static bool readField(const std::string &prompt, std::string &field, bool digitsOnly)
 {
-    std::string input;
-
-	while (firstname.empty())
+	field.clear();
+	while (field.empty())
 	{
-    	std::cout << "First name: ";
-		std::getline(std::cin, firstname);
-	}
-    while (lastname.empty())
-	{
-    	std::cout << "Last name: ";
-        std::getline(std::cin, lastname);
-	}
-    while (nickname.empty())
-	{
-    	std::cout << "Nickname: ";
-        std::getline(std::cin, nickname);
-	}
-    while (phoneNumber.empty())
-	{
-		// here I can use isdigit to check each character something like this :
-		//if (std::any_of(phoneNumber.begin(), phoneNumber.end(), [](char c){ return !std::isdigit(c); }))
-    	std::cout << "Phone number: ";
-        std::getline(std::cin, phoneNumber);
-		if (phoneNumber.find_first_not_of("0123456789") != std::string::npos)
+		std::cout << prompt;
+		if (!std::getline(std::cin, field))
+			return false;
+		if (digitsOnly && field.find_first_not_of("0123456789") != std::string::npos)
 		{
 			std::cout << "Invalid phone number. Please enter digits only." << std::endl;
-			phoneNumber.clear();
+			field.clear();
 		}
 	}
-    while (darkestSecret.empty())
-	{
-    	std::cout << "Darkest secret: ";
-        std::getline(std::cin, darkestSecret);
-	}
+	return true;
+}
+
+// Fills a temporary contact first, so a cancelled ADD never
+// overwrites the contact that is already stored in this slot.
+bool Contact::setContact()
+{
+	Contact tmp;
+
+	if (!readField("First name: ", tmp.firstname, false)
+		|| !readField("Last name: ", tmp.lastname, false)
+		|| !readField("Nickname: ", tmp.nickname, false)
+		|| !readField("Phone number: ", tmp.phoneNumber, true)
+		|| !readField("Darkest secret: ", tmp.darkestSecret, false))
+		return false;
+	*this = tmp;
+	return true;
 }
 
 void Contact::displayContact(int index) const
