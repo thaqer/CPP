@@ -61,7 +61,7 @@ A small phonebook that stores up to **8 contacts**. It reads three commands:
 
 | Command | What it does |
 |---|---|
-| `ADD` | Asks for first name, last name, nickname, phone number, darkest secret. No field can be empty, and the phone number must be digits only |
+| `ADD` | Asks for first name, last name, nickname, phone number, darkest secret. No field can be empty, and the phone number must be digits only. When the book is full, the **oldest** contact is replaced |
 | `SEARCH` | Shows all contacts in a table with 10-character columns (longer text is cut and ends with `.`), then shows one contact in full |
 | `EXIT` | Quits the program |
 
@@ -102,7 +102,8 @@ Last name: Lovelace
 **What I learned:**
 - Splitting a program into classes that each have **one job**: `Contact` holds one person, `PhoneBook` manages the list
 - Hiding data with `private` so only the class itself can change it
-- A fixed array of objects instead of dynamic memory (the subject forbids `new` here)
+- A fixed array of objects instead of dynamic memory (the subject forbids `new` here), used as a **circular buffer**: the 9th contact goes back to slot 0
+- Handling end of input (Ctrl+D) with `std::getline`, so the program exits cleanly instead of looping forever
 - Reading full lines with `std::getline` and formatting columns with `std::setw`
 
 ---
