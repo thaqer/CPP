@@ -166,8 +166,10 @@ void ShrubberyCreationForm::action() const {
     if (!file.is_open())
         throw std::runtime_error("Failed to create file");
     
-    file << "ASCII tree art here" << std::endl;
+    file << "        *        " << std::endl;
+    // ... more tree lines ...
     file.close();
+    std::cout << "Shrubbery has been created at " << target << "_shrubbery" << std::endl;
 }
 ```
 
@@ -191,13 +193,13 @@ void ShrubberyCreationForm::action() const {
 **Implementation**:
 ```cpp
 void RobotomyRequestForm::action() const {
-    std::cout << "* Drilling noises *" << std::endl;
+    std::cout << "          Drilling noises" << std::endl;
     
     std::srand(std::time(0));  // Seed RNG with current time
     if (std::rand() % 2)       // 0 or 1 (50/50)
-        std::cout << target << " has been robotomized successfully!";
+        std::cout << target << " has been robotomized successfully!" << std::endl;
     else
-        std::cout << "Robotomy failed on " << target << "!";
+        std::cout << "Robotomy failed on " << target << "!" << std::endl;
 }
 ```
 
@@ -372,16 +374,21 @@ form->execute(bureaucrat);  // Calls correct action()
 // Pardon: Correct message output
 ```
 
-### Sample Test Output
+### Actual Output of `./bureaucrat`
+
+Constructor/destructor messages omitted. The robotomy result is random.
 
 ```
-=== Test: RobotomyRequestForm ===
-Alice, bureaucrat grade 40
-Form: RobotomyRequestForm, Signed: No, Sign Grade: 72, Execute Grade: 45
-Alice signed RobotomyRequestForm
-* Drilling noises *
-Robotomy failed on Bender!
-Alice executed RobotomyRequestForm
+thaqer signed ShrubberyCreationForm
+Shrubbery has been created at tree_shrubbery
+thaqer executed ShrubberyCreationForm
+thaqer signed RobotomyRequestForm
+          Drilling noises
+Robotomy failed on ttt!
+thaqer executed RobotomyRequestForm
+thaqer signed PresidentialPardonForm
+boss has been pardoned by Zaphod Beeblebrox.
+thaqer executed PresidentialPardonForm
 ```
 
 ---
@@ -412,15 +419,13 @@ make fclean
 
 ```
 bureaucrat          # Executable
-home_shrubbery      # Created by ShrubberyCreationForm("home")
-garden_shrubbery    # Created by ShrubberyCreationForm("garden")
+tree_shrubbery      # Created by ShrubberyCreationForm("tree") in main.cpp
 ```
 
-### View Created Trees
+### View the Created Tree
 
 ```bash
-cat home_shrubbery
-cat garden_shrubbery
+cat tree_shrubbery
 ```
 
 ---
@@ -480,7 +485,7 @@ form.execute(bureaucrat);
 ```cpp
 // Compiler error - abstract class can't be instantiated
 class MyForm : public AForm {
-    // Missing: void action() const override
+    // Missing: void action() const;   ('override' does not exist in C++98)
 };
 ```
 
@@ -542,19 +547,19 @@ forms.push_back(new RobotomyRequestForm("Bender"));
 ---
 
 **Project Completion Checklist:**
-- [ ] AForm is abstract with pure virtual `action()`
-- [ ] All three form types implemented
-- [ ] Correct grade requirements for each form
-- [ ] ShrubberyCreationForm creates files
-- [ ] RobotomyRequestForm has random success
-- [ ] PresidentialPardonForm prints message
-- [ ] Bureaucrat has `executeForm()` method
-- [ ] All exceptions handled properly
-- [ ] Orthodox Canonical Form for all classes
-- [ ] Comprehensive test suite in main()
-- [ ] No memory leaks
-- [ ] Makefile with fclean removes shrubbery files
-- [ ] Code compiles with -Wall -Wextra -Werror -std=c++98
+- [x] AForm is abstract with pure virtual `action()`
+- [x] All three form types implemented
+- [x] Correct grade requirements for each form
+- [x] ShrubberyCreationForm creates files
+- [x] RobotomyRequestForm has random success
+- [x] PresidentialPardonForm prints message
+- [x] Bureaucrat has `executeForm()` method
+- [x] All exceptions handled properly
+- [x] Orthodox Canonical Form for all classes
+- [x] Tests in main()
+- [x] No memory leaks
+- [x] Makefile with fclean removes shrubbery files
+- [x] Code compiles with -Wall -Wextra -Werror -std=c++98
 
 ---
 

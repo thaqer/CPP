@@ -20,16 +20,15 @@ This exercise builds upon Exercise 02 by introducing the **Intern** class - a fa
 ### Requirements
 - Create an `Intern` class that can instantiate forms by name
 - Implement a `makeForm()` method that takes form name and target
-- Use function pointers (C++98) to map form names to creation functions
-- Handle unknown form types gracefully (no exceptions)
-- Return NULL when form type is unknown
+- Avoid long if/else chains: this implementation maps form names to creation functions with an array of function pointers
+- Print an explicit error message when the form name is unknown
+- Return NULL when the form name is unknown
 - Properly manage memory for dynamically created forms
 
-### Key Quote from Subject
-> "Announce form creation with messages like:
-> 'Intern creates <form>'
-> If form doesn't exist:
-> 'Intern cannot create <form> because it doesn't exist.'"
+### Output Messages
+- On success the subject requires: `Intern creates <form>`
+- On an unknown name the subject requires an explicit error message. This implementation prints:
+  `Intern cannot create form: <name> (unknown form type)`
 
 ---
 
@@ -139,26 +138,16 @@ for (int i = 0; i < 3; i++) {
 ## Class Hierarchy
 
 ```
-                    ┌─────────┐
-                    │  AForm  │ (Abstract)
-                    └────┬────┘
-                         │
-          ┌──────────────┼──────────────┐
-          │              │              │
-┌─────────▼─────────┐   │   ┌──────────▼───────────┐
-│ ShrubberyCreation │   │   │ PresidentialPardon   │
-│      Form         │   │   │       Form           │
-└───────────────────┘   │   └──────────────────────┘
-                        │
-              ┌─────────▼──────────┐
-              │  RobotomyRequest   │
-              │       Form         │
-              └────────────────────┘
-                        ▲
-                        │
-                  ┌─────┴─────┐
-                  │  Intern   │ (Factory)
-                  └───────────┘
+┌───────────┐  makeForm() returns AForm*  ┌─────────┐
+│  Intern   │ ──────────────────────────▶ │  AForm  │ (Abstract)
+│ (Factory) │                             └────┬────┘
+└───────────┘                                  │
+                          ┌────────────────────┼────────────────────┐
+                          │                    │                    │
+               ┌──────────▼────────┐ ┌─────────▼────────┐ ┌─────────▼──────────┐
+               │ ShrubberyCreation │ │ RobotomyRequest  │ │ PresidentialPardon │
+               │       Form        │ │      Form        │ │        Form        │
+               └───────────────────┘ └──────────────────┘ └────────────────────┘
 ```
 
 ### Class Relationships
@@ -328,7 +317,7 @@ AForm* (*creators[3])(const std::string&) = {...};
 std::map<std::string, std::function<AForm*(const std::string&)>> creators;
 ```
 **Pros**: Dynamic, easy to extend
-**Cons**: Not C++98, slower lookup
+**Cons**: Not C++98 (`std::function` is C++11)
 
 #### 3. Switch Statement
 ```cpp
@@ -414,7 +403,7 @@ Client: makeForm("invalid form", "target")
 Client: Check if (form) → false → handle gracefully
 ```
 
-**No Exceptions**: Subject explicitly says to avoid exceptions for unknown forms. Use NULL instead.
+**No exception for unknown names**: this implementation prints a message and returns NULL, so the caller must check the pointer before using it.
 
 ---
 
@@ -508,26 +497,24 @@ intern3 = intern1;  // Should work
 ### Expected Output Patterns
 
 ```
-=== Test 1: Valid Forms ===
-Intern default constructor called
-Intern creates shrubbery creation
-Form: ShrubberyCreationForm, Signed: No, Sign Grade: 145, Execute Grade: 137
-Intern creates robotomy request
-Form: RobotomyRequestForm, Signed: No, Sign Grade: 72, Execute Grade: 45
+# Actual output of ./bureaucrat (constructor/destructor messages omitted;
+# the robotomy result is random)
 Intern creates presidential pardon
-Form: PresidentialPardonForm, Signed: No, Sign Grade: 25, Execute Grade: 5
+Intern creates robotomy request
+Intern creates shrubbery creation
+thaqer signed PresidentialPardonForm
+presidential has been pardoned by Zaphod Beeblebrox.
+thaqer executed PresidentialPardonForm
+thaqer signed RobotomyRequestForm
+          Drilling noises
+Robotomy failed on robotomy!
+thaqer executed RobotomyRequestForm
+thaqer signed ShrubberyCreationForm
+Shrubbery has been created at shrubbery_shrubbery
+thaqer executed ShrubberyCreationForm
 
-=== Test 2: Invalid Form ===
-Intern creates
+# An unknown name prints:
 Intern cannot create form: unknown form (unknown form type)
-Form creation failed (returned NULL)
-
-=== Test 3: Integration ===
-Boss, bureaucrat grade 1
-Form: PresidentialPardonForm, Signed: No, Sign Grade: 25, Execute Grade: 5
-Boss signed PresidentialPardonForm
-Criminal has been pardoned by Zaphod Beeblebrox.
-Boss executed PresidentialPardonForm
 ```
 
 ---
@@ -567,8 +554,8 @@ $ ./bureaucrat
 ### Memory Leak Checking
 
 ```bash
-# Compile with sanitizers
-make CXXFLAGS="-fsanitize=address -g"
+# Compile with AddressSanitizer (detects leaks on Linux)
+c++ -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g -Iincludes src/*.cpp -o bureaucrat
 ./bureaucrat
 
 # Or use valgrind
@@ -583,7 +570,8 @@ valgrind --leak-check=full ./bureaucrat
 
 ### ❌ Pitfall 1: Non-Static Factory Methods
 ```cpp
-// Wrong - can't take address of non-static member function
+// Wrong - a non-static member function has a hidden 'this' parameter,
+// so its address is a pointer-to-member, not a plain function pointer
 class Intern {
     AForm* createShrubbery(const std::string& target);  // Non-static
 };
@@ -642,27 +630,25 @@ form = intern.makeForm("ROBOTOMY REQUEST", "target");  // ❌ NULL
 form = intern.makeForm("shrubbery creation", "home");  // ✓
 ```
 
-### ❌ Pitfall 5: Wrong Function Pointer Syntax
+### 💡 Note 5: Function Pointer Syntax
 ```cpp
-// Wrong - missing address-of operator
+// Both are valid for static member functions:
 AForm* (*creators[3])(const std::string&) = {
-    Intern::createShrubbery,  // ❌ (might work, but implicit)
+    Intern::createShrubbery,   // implicit conversion to pointer
 };
-
-// Correct - explicit address
 AForm* (*creators[3])(const std::string&) = {
-    &Intern::createShrubbery,  // ✓ Clear intent
+    &Intern::createShrubbery,  // explicit '&' (used here, clearer intent)
 };
 ```
 
-### ❌ Pitfall 6: Throwing Exceptions for Unknown Forms
+### 💡 Note 6: Unknown Forms - Exception or NULL?
 ```cpp
-// Wrong - subject says no exceptions for unknown forms
+// Also possible, but then every caller must catch it
 if (not found)
-    throw UnknownFormException();  // ❌
+    throw UnknownFormException();
 ```
 
-**Solution**: Return NULL and print message
+**This implementation**: print an error message and return NULL
 ```cpp
 if (not found) {
     std::cout << "Intern cannot create form..." << std::endl;
@@ -686,8 +672,8 @@ if (not found) {
 // Step 1: New form class
 class TaxForm : public AForm { ... };
 
-// Step 2: Factory method
-static AForm* Intern::createTax(const std::string& target) {
+// Step 2: Factory method ('static' goes only on the declaration in Intern.hpp)
+AForm* Intern::createTax(const std::string& target) {
     return new TaxForm(target);
 }
 
@@ -721,8 +707,8 @@ functionPtr = &Intern::createShrubbery;
 // Call: parenthesize pointer, then call
 AForm* result = (*functionPtr)("target");
 
-// Shorthand call (works in C++)
-AForm* result = functionPtr("target");  // () has higher precedence
+// Shorthand call: a function pointer can be called directly
+AForm* result = functionPtr("target");
 
 // Array: 3 such function pointers
 AForm* (*array[3])(const std::string&);
@@ -773,25 +759,25 @@ AForm* (*array[3])(const std::string&);
 | **Creation Method**   | Direct instantiation     | Factory method                |
 | **Coupling**          | Client knows all classes | Client uses string names      |
 | **Extensibility**     | Must update client code  | Only update factory           |
-| **Error Handling**    | Exceptions               | NULL return                   |
+| **Error Handling**    | Exceptions               | Exceptions + NULL for unknown form names |
 | **Key Technique**     | Virtual functions        | Function pointers             |
 
 ---
 
 **Project Completion Checklist:**
-- [ ] Intern class with Orthodox Canonical Form
-- [ ] Static factory methods for each form type
-- [ ] makeForm() with function pointer dispatch
-- [ ] Parallel arrays for name-to-creator mapping
-- [ ] Correct form names (lowercase, with spaces)
-- [ ] NULL return for unknown forms (no exceptions)
-- [ ] Success/failure messages printed
-- [ ] Memory management: delete all created forms
-- [ ] No memory leaks (valgrind clean)
-- [ ] Integration tests with Bureaucrat
-- [ ] Makefile includes Intern.cpp
-- [ ] Code compiles with -Wall -Wextra -Werror -std=c++98
-- [ ] All previous exercise functionality still works
+- [x] Intern class with Orthodox Canonical Form
+- [x] Static factory methods for each form type
+- [x] makeForm() with function pointer dispatch
+- [x] Parallel arrays for name-to-creator mapping
+- [x] Correct form names (lowercase, with spaces)
+- [x] NULL return for unknown forms (no exceptions)
+- [x] Success/failure messages printed
+- [x] Memory management: delete all created forms
+- [x] No memory leaks (checked with AddressSanitizer)
+- [x] Integration tests with Bureaucrat
+- [x] Makefile includes Intern.cpp
+- [x] Code compiles with -Wall -Wextra -Werror -std=c++98
+- [x] All previous exercise functionality still works
 
 ---
 
